@@ -1,70 +1,157 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+// app/index.tsx
+import React from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
+const babyImage = require('../../assets/images/babyImage.png');
+const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
+const sleepImage = require('../../assets/images/sleep.png'); // Add image for sleep
+const nappyImage = require('../../assets/images/nappy.png'); // Add image for nappy
+const growthImage = require('../../assets/images/growth.png'); // Add image for growth
+const healthImage = require('../../assets/images/health.png'); // Add image for health
 
-export default function HomeScreen() {
+type IconWithLabelProps = {
+  image: any; // Change to accept image source
+  label: string;
+};
+
+export default function HomePage() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Hi Hinata</Text>
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={profile}
+          style={styles.avatar}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+
+      <View style={styles.iconsRow}>
+        <IconWithLabel image={feedingImage} label="Feeding" />
+        <IconWithLabel image={sleepImage} label="Sleep" />
+        <IconWithLabel image={nappyImage} label="Nappy" />
+        <IconWithLabel image={growthImage} label="Growth" />
+        <IconWithLabel image={healthImage} label="Health" />
+      </View>
+
+      <View style={styles.imageContainer}>
+  <Image source={babyImage} style={styles.babyPhoto} />
+  <Text style={styles.birthday}>
+    Birthday: <Text style={styles.textBig}>24</Text> JUNE
+  </Text>
+</View>
+
+
+      
+      <View style={styles.quoteContainer}>
+        <Text style={styles.quote}>
+          "Raising a child is like planting a seed and watching it grow into a beautiful flower." — Lisa Wingate
+        </Text>
+      </View>
+
+      <TouchableOpacity style={styles.linkContainer}>
+        <Text style={styles.TextHeader}>Baby Care <Text style={styles.arrowgray}>{'>'}</Text></Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+}
+
+function IconWithLabel({ image, label }: IconWithLabelProps) {
+  return (
+    <TouchableOpacity style={styles.iconContainer} onPress={() => alert(label)}>
+      <Image source={image} style={styles.iconImage} accessibilityLabel={label} /> 
+      <Text style={styles.iconLabel}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  imageContainer: {
+    position: 'relative', 
+    width: '100%', 
+    height: 400, 
+    marginBottom: 20,
+  },
+  babyPhoto: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  birthday: {
+    position: 'absolute', 
+    bottom: 10, 
+    left: 10, 
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black', 
+    padding: 4, 
+    borderRadius: 4, 
+  },
+  textBig:{
+    fontSize: 30,
+  },
+  arrowgray: {
+    color: '#8D8C92',
+  },
+  container: {
+    marginTop: 40,
+    flex: 1,
+    padding: 16,
+    backgroundColor: 'white',
+  },
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  greeting: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  iconsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  iconContainer: {
+    alignItems: 'center',
+  },
+  iconImage: {
+    width: width * 0.15,  
+    height: width * 0.15, 
+  },
+  iconLabel: {
+    marginTop: 4,
+    fontSize: 12,
+    color: 'gray',
+  },
+  quoteContainer: {
+    backgroundColor: '#0078A4',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  quote: {
+    color: 'white',
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+  linkContainer: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+  },
+  TextHeader: {
+    color: 'black',
+    fontSize: 23,
+    fontWeight: '500',
   },
 });
