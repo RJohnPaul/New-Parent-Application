@@ -1,4 +1,5 @@
 // app/index.tsx
+import { Colors } from '@/constants/Colors';
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Dimensions } from 'react-native';
@@ -7,10 +8,10 @@ const { width } = Dimensions.get('window');
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const babyImage = require('../../assets/images/babyImage.png');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
-const sleepImage = require('../../assets/images/sleep.png'); // Add image for sleep
-const nappyImage = require('../../assets/images/nappy.png'); // Add image for nappy
-const growthImage = require('../../assets/images/growth.png'); // Add image for growth
-const healthImage = require('../../assets/images/health.png'); // Add image for health
+const sleepImage = require('../../assets/images/sleep.png'); 
+const nappyImage = require('../../assets/images/nappy.png');
+const growthImage = require('../../assets/images/growth.png'); 
+const healthImage = require('../../assets/images/health.png');
 
 type IconWithLabelProps = {
   image: any; // Change to accept image source
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   quoteContainer: {
-    backgroundColor: '#0078A4',
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
