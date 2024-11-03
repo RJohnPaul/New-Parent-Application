@@ -15,6 +15,10 @@
     "ios": {
       "supportsTablet": true
     },
+    "extra": {
+      "SUPABASE_URL": "your_supabase_url",
+      "SUPABASE_ANON_KEY": "your_supabase_anon_key"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

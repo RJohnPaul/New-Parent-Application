@@ -10,7 +10,7 @@ export default function Layout() {
     <View style={styles.container}>
       <Tabs screenOptions={{ tabBarActiveTintColor: Colors.highlight, headerShown: false }}>
         <Tabs.Screen
-          name="index"
+          name="Home"
           options={{
             title: 'Home',
             tabBarIcon: ({ color, size }) => (

@@ -1,24 +1,31 @@
-// app/index.tsx
 import { Colors } from '@/constants/Colors';
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Button, Alert } from 'react-native';
 import { Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
+import { supabase } from '../../supabase';
+
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const babyImage = require('../../assets/images/babyImage.png');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
 const sleepImage = require('../../assets/images/sleep.png'); 
 const nappyImage = require('../../assets/images/nappy.png');
-const growthImage = require('../../assets/images/growth.png'); 
-const healthImage = require('../../assets/images/health.png');
+const growthImage = require('../../assets/images/growth home.png'); 
+const healthImage = require('../../assets/images/health home.png');
 
 type IconWithLabelProps = {
-  image: any; // Change to accept image source
+  image: any; 
   label: string;
 };
 
 export default function HomePage() {
+  const onLogout = async () => {
+    const {error} = await supabase.auth.signOut();
+    if(error) {
+      Alert.alert('Sign Out', "Error signing out!")
+    }
+  }
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -28,6 +35,7 @@ export default function HomePage() {
           style={styles.avatar}
         />
       </View>
+      <Button title='logout' onPress={onLogout}/>
 
       <View style={styles.iconsRow}>
         <IconWithLabel image={feedingImage} label="Feeding" />
@@ -43,9 +51,6 @@ export default function HomePage() {
     Birthday: <Text style={styles.textBig}>24</Text> JUNE
   </Text>
 </View>
-
-
-      
       <View style={styles.quoteContainer}>
         <Text style={styles.quote}>
           "Raising a child is like planting a seed and watching it grow into a beautiful flower." — Lisa Wingate
@@ -53,8 +58,9 @@ export default function HomePage() {
       </View>
 
       <TouchableOpacity style={styles.linkContainer}>
-        <Text style={styles.TextHeader}>Baby Care <Text style={styles.arrowgray}>{'>'}</Text></Text>
+        <Text style={styles.TextHeader}>Baby Care </Text>
       </TouchableOpacity>
+
     </ScrollView>
   );
 }
@@ -70,8 +76,8 @@ function IconWithLabel({ image, label }: IconWithLabelProps) {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    position: 'relative', 
-    width: '100%', 
+    position: 'relative',
+    width: '100%',
     height: 400, 
     marginBottom: 20,
   },
@@ -93,11 +99,7 @@ const styles = StyleSheet.create({
   textBig:{
     fontSize: 30,
   },
-  arrowgray: {
-    color: '#8D8C92',
-  },
   container: {
-    marginTop: 40,
     flex: 1,
     padding: 16,
     backgroundColor: 'white',
@@ -121,7 +123,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
-  },
+    width: '100%', 
+    backgroundColor: 'white', 
+    zIndex: 1, 
+  },  
   iconContainer: {
     alignItems: 'center',
   },
