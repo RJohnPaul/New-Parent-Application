@@ -4,6 +4,7 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Button, Al
 import { Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 import { supabase } from '../../supabase';
+import  ScreenWrapper  from '../../components/ScreenWrapper'
 
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
@@ -27,7 +28,8 @@ export default function HomePage() {
     }
   }
   return (
-    <ScrollView style={styles.container}>
+    <ScreenWrapper bg='white'>
+      <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hi Hinata</Text>
         <Image
@@ -62,6 +64,7 @@ export default function HomePage() {
       </TouchableOpacity>
 
     </ScrollView>
+    </ScreenWrapper>
   );
 }
 

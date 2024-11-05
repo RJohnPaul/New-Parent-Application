@@ -1,5 +1,7 @@
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import  ScreenWrapper  from '../../components/ScreenWrapper'
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
@@ -9,8 +11,10 @@ const growthImage = require('../../assets/images/growth.png');
 const healthImage = require('../../assets/images/health.png');
 
 export default function Tab() {
+  const router = useRouter();
   return (
-    <ScrollView style={styles.container}>
+    <ScreenWrapper bg='white'>
+<ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hi Hinata</Text>
         <Image
@@ -22,7 +26,7 @@ export default function Tab() {
       <View style={styles.flexContainer}>
         <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
         <Text style={styles.imageText}>Feeding</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/dialogs/feeding' as any)}>
             <Image source={feedingImage} style={styles.iconImage}/>
           </TouchableOpacity>
         </LinearGradient>
@@ -54,6 +58,7 @@ export default function Tab() {
         </LinearGradient>
       </View>
     </ScrollView>
+    </ScreenWrapper>
   );
 }
 

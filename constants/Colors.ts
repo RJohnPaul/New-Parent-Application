@@ -12,4 +12,6 @@ export const Colors = {
   text: '#494949',
   textLight: '#7C7C7C',
   textDark: '#1D1D1D',
+  ResetButton: '#F5C1C1',
+  ResetText: '#D53131'
 };

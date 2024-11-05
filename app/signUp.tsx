@@ -11,39 +11,47 @@ import { supabase } from '../supabase';
 
 const SignUp = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [Email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [Password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); 
 
   const onSubmit = async () => {
-    if (!email || !password || !userName) {
+    if (!Email || !Password || !userName) {
       Alert.alert('Sign Up', 'Please fill all the fields');
       return;
     }
-    setLoading(true); // Start loading
-
+    setLoading(true);
+  
     let name = userName.trim();
-    let Email = email.trim();
-    let Password = password.trim();
-
-    const { data: { session }, error } = await supabase.auth.signUp({
-      email: Email,
-      password: Password,
-      options: {
-        data: {
-          name
+    let email = Email.trim();
+    let password = Password.trim();
+  
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name } 
         }
-      }
-    });
-
-
-    if (error) {
-      Alert.alert('Sign up', error.message);
+      });
+  
+      if (error) throw error;
+  
+      Alert.alert(
+        'Sign Up',
+        'Account created successfully! Please check your email to verify your account.'
+      );
+      router.replace('/login');
+    } catch (error) {
+      console.log('Sign-up error:', error);
+      Alert.alert('Sign-up Error', 'An error occurred during sign-up.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false); // Stop loading
   };
+  
+  
 
   return (
     <ScreenWrapper bg="white">
