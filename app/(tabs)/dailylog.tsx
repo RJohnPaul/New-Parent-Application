@@ -32,7 +32,7 @@ export default function Tab() {
         </LinearGradient>
         <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
         <Text style={styles.imageText}>Sleep</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/dialogs/sleeping' as any)}>
             <Image source={sleepImage} style={styles.iconImage}/>
           </TouchableOpacity>
         </LinearGradient>

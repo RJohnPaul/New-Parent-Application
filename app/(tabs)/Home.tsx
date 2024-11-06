@@ -41,7 +41,7 @@ export default function HomePage() {
 
       <View style={styles.iconsRow}>
         <IconWithLabel image={feedingImage} label="Feeding" />
-        <IconWithLabel image={sleepImage} label="Sleep" />
+        <IconWithLabel image={sleepImage} label="Sleep"/>
         <IconWithLabel image={nappyImage} label="Nappy" />
         <IconWithLabel image={growthImage} label="Growth" />
         <IconWithLabel image={healthImage} label="Health" />

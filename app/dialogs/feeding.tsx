@@ -313,7 +313,8 @@ const styles = StyleSheet.create({
         margin: 10,
         fontSize: 16,
         color: '#4F8DD1',
-        fontWeight: '500'
+        fontWeight: '500',
+        textAlign: 'center'
     },
     circle: {
         width: 80,
