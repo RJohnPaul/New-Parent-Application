@@ -37,9 +37,9 @@ export default function Tab() {
           </TouchableOpacity>
         </LinearGradient>
         <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
-        <Text style={styles.imageText}>Nappy</Text>
+        <Text style={styles.imageText} >Nappy</Text>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/dialogs/nappy' as any)}>
             <Image source={nappyImage} style={styles.iconImage}/>
           </TouchableOpacity>
         </LinearGradient>
