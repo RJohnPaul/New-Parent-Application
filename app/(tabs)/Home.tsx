@@ -46,8 +46,7 @@ export default function HomePage() {
         quality: 1,
       });
 
-      if (!result.canceled) {
-        // Upload to Supabase
+      if (!result.canceled && result.assets && result.assets.length > 0) {
         const uri = result.assets[0].uri;
         await uploadImage(uri);
       }
@@ -71,12 +70,10 @@ export default function HomePage() {
         return;
       }
 
-      const publicUrl = supabase.storage
-        .from('images')
-        .getPublicUrl(data.path)
-        .data.publicUrl;
+      const { data: publicUrlData } = supabase.storage.from('images').getPublicUrl(data.path);
+      const publicUrl = publicUrlData.publicUrl;
 
-      setImageUri(publicUrl); // Set the uploaded image URL
+      setImageUri(publicUrl); // Display the uploaded image
       Alert.alert('Upload Successful', 'Your image has been uploaded successfully.');
     } catch (error) {
       console.error('Error uploading image:', error);
