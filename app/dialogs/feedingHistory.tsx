@@ -16,6 +16,7 @@ const data = [
     { date: '12 May 24', breastfeeding: '00:00:00', liquid: '50.00ml' },
     { date: '11 May 24', breastfeeding: '00:20:25', liquid: '0.00ml' },
     { date: '10 May 24', breastfeeding: '00:00:00', liquid: '25.00ml' },
+    { date: '18 May 24', breastfeeding: '00:00:00', liquid: '25.00ml' },
   ];
 
 const feedingHistory = (props: Props) => {
