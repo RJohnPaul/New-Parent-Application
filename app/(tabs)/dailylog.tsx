@@ -46,13 +46,13 @@ export default function Tab() {
 
         <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
         <Text style={styles.imageText}>Growth</Text>
-          <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/dialogs/growth' as any)}>
             <Image source={growthImage} style={styles.iconImage}/>
           </TouchableOpacity>
         </LinearGradient>
         <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
         <Text style={styles.imageText}>Health</Text>
-          <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/dialogs/health' as any)}>
             <Image source={healthImage} style={styles.iconImage}/>
           </TouchableOpacity>
         </LinearGradient>
