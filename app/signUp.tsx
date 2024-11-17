@@ -1,57 +1,72 @@
-import { Alert, StyleSheet, Text, View, Pressable, ActivityIndicator } from 'react-native';
+import { Alert, ActivityIndicator, Pressable, Text, View, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { hp, wp } from '@/helpers/common';
-import { Colors } from '@/constants/Colors';
 import Input from '@/components/Input';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { supabase } from '../supabase';
+import { hp, wp } from '@/helpers/common';
+import { Colors } from '@/constants/Colors';
+
+// Utility function to generate a 5-digit random ID
+const generateRandomID = () => Math.floor(10000 + Math.random() * 90000);
 
 const SignUp = () => {
   const router = useRouter();
-  const [Email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
-  const [Password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); 
+  const [showCongrats, setShowCongrats] = useState(false);
 
   const onSubmit = async () => {
-    if (!Email || !Password || !userName) {
+    if (!email || !password || !userName) {
       Alert.alert('Sign Up', 'Please fill all the fields');
       return;
     }
     setLoading(true);
-  
-    let name = userName.trim();
-    let email = Email.trim();
-    let password = Password.trim();
-  
+
+    let trimmedName = userName.trim();
+    let trimmedEmail = email.trim();
+    let trimmedPassword = password.trim();
+    const randomID = generateRandomID();
+
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name } 
-        }
+      const { error } = await supabase.auth.signUp({
+        email: trimmedEmail,
+        password: trimmedPassword,
       });
-  
+
       if (error) throw error;
-  
-      Alert.alert(
-        'Sign Up',
-        'Account created successfully! Please check your email to verify your account.'
-      );
-      router.replace('/login');
+
+      const { error: insertError } = await supabase
+        .from('Profiles')
+        .insert([{ mainid: randomID, name: trimmedName , email: trimmedEmail}]);
+
+      if (insertError) throw insertError;
+
+      setShowCongrats(true);
     } catch (error) {
-      console.log('Sign-up error:', error);
-      Alert.alert('Sign-up Error', 'An error occurred during sign-up.');
+      Alert.alert('Sign-up Error', (error as Error).message);
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
+  if (showCongrats) {
+    return (
+      <ScreenWrapper bg="white">
+        <StatusBar style="dark" />
+        <View style={styles.container}>
+          <Text style={styles.congratsText}>Congratulations, {userName}! You are registered.</Text>
+          <Pressable onPress={() => router.replace('/login')} style={styles.button}>
+            <Text style={styles.text}>Now, Login</Text>
+          </Pressable>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper bg="white">
@@ -60,54 +75,40 @@ const SignUp = () => {
         <Pressable onPress={() => router.back()} style={styles.buttonBack}>
           <Icon name="arrow-back" size={24} color="#000" />
         </Pressable>
-
-        <View>
-          <Text style={styles.welcomeText}>Let's</Text>
-          <Text style={styles.welcomeText}>Get Started</Text>
-        </View>
-
-        <View style={styles.form}>
-          <Text style={styles.instructionText}>Please fill the details to create an account</Text>
-
-          <Input
-            placeholder="Enter your Name"
-            icon={<Icon name="person" size={24} color={Colors.textLight} />} 
-            onChangeText={setUserName} 
-          />
-
-          <Input
-            placeholder="Enter your email"
-            icon={<Icon name="email" size={24} color={Colors.textLight} />}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <Input
-            placeholder="Enter your password"
-            icon={<Icon name="lock" size={24} color={Colors.textLight} />}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-
-        </View>
-
-        <View style={styles.buttonfooter}>
-          {loading ? ( // Show loading spinner if loading state is true
-            <ActivityIndicator size="large" color={Colors.highlight} />
-          ) : (
-            <Pressable onPress={onSubmit} style={styles.button}>
-              <Text style={styles.text}>Sign Up</Text>
-            </Pressable>
-          )}
-          <View style={styles.bottomText}>
-            <Text style={styles.loginText}>Already have an account!</Text>
-            <Pressable onPress={() => router.push('/login')}>
-              <Text style={[styles.loginText, { color: Colors.highlight, fontWeight: '700' }]}>
-                Login
-              </Text>
-            </Pressable>
-          </View>
+        <Text style={styles.welcomeText}>Let's Get Started</Text>
+        <Text style={styles.instructionText}>Please fill the details to create an account</Text>
+        <Input
+          placeholder="Enter your Name"
+          icon={<Icon name="person" size={24} color={Colors.textLight} />}
+          onChangeText={setUserName}
+        />
+        <Input
+          placeholder="Enter your email"
+          icon={<Icon name="email" size={24} color={Colors.textLight} />}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <Input
+          placeholder="Enter your password"
+          icon={<Icon name="lock" size={24} color={Colors.textLight} />}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        {loading ? (
+          <ActivityIndicator size="large" color={Colors.highlight} />
+        ) : (
+          <Pressable onPress={onSubmit} style={styles.button}>
+            <Text style={styles.text}>Sign Up</Text>
+          </Pressable>
+        )}
+        <View style={styles.bottomText}>
+          <Text style={styles.loginText}>Already have an account!</Text>
+          <Pressable onPress={() => router.push('/login')}>
+            <Text style={[styles.loginText, { color: Colors.highlight, fontWeight: '700' }]}>
+              Login
+            </Text>
+          </Pressable>
         </View>
       </View>
     </ScreenWrapper>
@@ -126,28 +127,14 @@ const styles = StyleSheet.create({
     fontSize: hp(5),
     fontWeight: '800',
     color: 'black',
-    fontFamily: 'SFProDisplay-bold', 
+    fontFamily: 'SFProDisplay-bold',
     textAlign: 'left',
-  },
-  form: {
-    gap: 25,
   },
   instructionText: {
     fontSize: hp(2.5),
     fontWeight: '500',
     color: Colors.text,
     fontFamily: 'SFProDisplay-Regular',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 5,
-  },
-  footerText: {
-    textAlign: 'center',
-    color: Colors.gray,
-    fontSize: hp(1.6),
   },
   buttonBack: {
     flexDirection: 'row',
@@ -186,8 +173,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: 'SFProDisplay-Regular',
   },
-  buttonfooter: {
-    gap: 30,
-    width: '100%',
+  congratsText: {
+    fontSize: hp(4),
+    fontWeight: '700',
+    textAlign: 'center',
+    color: Colors.highlight,
+    marginVertical: hp(10),
+    fontFamily: 'SFProDisplay-Bold',
   },
 });

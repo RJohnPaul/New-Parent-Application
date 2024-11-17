@@ -4,8 +4,8 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Button, Al
 import { Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 import { supabase } from '../../supabase';
-import  ScreenWrapper  from '../../components/ScreenWrapper'
-
+import ScreenWrapper from '../../components/ScreenWrapper';
+import { useRouter } from 'expo-router';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const babyImage = require('../../assets/images/babyImage.png');
@@ -16,61 +16,82 @@ const growthImage = require('../../assets/images/growth home.png');
 const healthImage = require('../../assets/images/health home.png');
 
 type IconWithLabelProps = {
-  image: any; 
+  image: any;
   label: string;
+  onPress: () => void;
 };
 
 export default function HomePage() {
+  const router = useRouter();
+
   const onLogout = async () => {
-    const {error} = await supabase.auth.signOut();
-    if(error) {
-      Alert.alert('Sign Out', "Error signing out!")
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('Sign Out', 'Error signing out!');
+    } else {
+      Alert.alert('Sign Out', 'You have been signed out.');
+      router.replace('/login');  // Redirect to login screen after logout
     }
-  }
+  };
+
   return (
-    <ScreenWrapper bg='white'>
+    <ScreenWrapper bg="white">
       <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Hi Hinata</Text>
-        <Image
-          source={profile}
-          style={styles.avatar}
-        />
-      </View>
-      <Button title='logout' onPress={onLogout}/>
+        <View style={styles.header}>
+          <Text style={styles.greeting}>Hi Hinata</Text>
+          <Image source={profile} style={styles.avatar} />
+        </View>
 
-      <View style={styles.iconsRow}>
-        <IconWithLabel image={feedingImage} label="Feeding" />
-        <IconWithLabel image={sleepImage} label="Sleep"/>
-        <IconWithLabel image={nappyImage} label="Nappy" />
-        <IconWithLabel image={growthImage} label="Growth" />
-        <IconWithLabel image={healthImage} label="Health" />
-      </View>
+        <View style={styles.iconsRow}>
+          <IconWithLabel 
+            image={feedingImage} 
+            label="Feeding" 
+            onPress={() => router.push('/dialogs/feeding')} 
+          />
+          <IconWithLabel 
+            image={sleepImage} 
+            label="Sleep" 
+            onPress={() => router.push('/dialogs/sleeping')} 
+          />
+          <IconWithLabel 
+            image={nappyImage} 
+            label="Nappy" 
+            onPress={() => router.push('/dialogs/nappy')} 
+          />
+          <IconWithLabel 
+            image={growthImage} 
+            label="Growth" 
+            onPress={() => router.push('/')} 
+          />
+          <IconWithLabel 
+            image={healthImage} 
+            label="Health" 
+            onPress={() => router.push('/')} 
+          />
+        </View>
 
-      <View style={styles.imageContainer}>
-  <Image source={babyImage} style={styles.babyPhoto} />
-  <Text style={styles.birthday}>
-    Birthday: <Text style={styles.textBig}>24</Text> JUNE
-  </Text>
-</View>
-      <View style={styles.quoteContainer}>
-        <Text style={styles.quote}>
-          "Raising a child is like planting a seed and watching it grow into a beautiful flower." — Lisa Wingate
-        </Text>
-      </View>
+        <View style={styles.imageContainer}>
+          <Image source={babyImage} style={styles.babyPhoto} />
+          <Text style={styles.birthday}>
+            Birthday: <Text style={styles.textBig}>24</Text> JUNE
+          </Text>
+        </View>
 
-      <TouchableOpacity style={styles.linkContainer}>
-        <Text style={styles.TextHeader}>Baby Care </Text>
-      </TouchableOpacity>
+        <View style={styles.quoteContainer}>
+          <Text style={styles.quote}>
+            "Raising a child is like planting a seed and watching it grow into a beautiful flower." — Lisa Wingate
+          </Text>
+        </View>
 
-    </ScrollView>
+        <Button title="Logout" onPress={onLogout} />
+      </ScrollView>
     </ScreenWrapper>
   );
 }
 
-function IconWithLabel({ image, label }: IconWithLabelProps) {
+function IconWithLabel({ image, label, onPress }: IconWithLabelProps) {
   return (
-    <TouchableOpacity style={styles.iconContainer} onPress={() => alert(label)}>
+    <TouchableOpacity style={styles.iconContainer} onPress={onPress}>
       <Image source={image} style={styles.iconImage} accessibilityLabel={label} /> 
       <Text style={styles.iconLabel}>{label}</Text>
     </TouchableOpacity>
@@ -99,7 +120,7 @@ const styles = StyleSheet.create({
     padding: 4, 
     borderRadius: 4, 
   },
-  textBig:{
+  textBig: {
     fontSize: 30,
   },
   container: {
@@ -153,14 +174,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center',
-  },
-  linkContainer: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-  },
-  TextHeader: {
-    color: 'black',
-    fontSize: 23,
-    fontWeight: '500',
   },
 });

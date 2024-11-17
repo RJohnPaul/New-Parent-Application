@@ -1,215 +1,158 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Colors } from '../../constants/Colors';
-import { hp, wp } from '@/helpers/common';
-import {  useRouter } from 'expo-router';
-import  ScreenWrapper  from '../../components/ScreenWrapper'
+// AddFeedScreen.js
+import React, { useRef, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import ScreenWrapper from '@/components/ScreenWrapper';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTimer } from '@/components/timerContext'; // Import useTimer hook from TimerContext
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import  {hp, wp}  from '@/helpers/common';
+import {Colors} from '@/constants/Colors'
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
+
+
 export default function AddFeedScreen() {
     const [selectedOption, setSelectedOption] = useState('Breastfeeding');
-    const [leftTimer, setLeftTimer] = useState(0);
-    const [rightTimer, setRightTimer] = useState(0);
-    const [openDialog, setOpenDialog] = useState(false);
+    const { leftTimer, rightTimer, activeTimer, startLeftTimer, startRightTimer, stopTimers } = useTimer(); // Use context values
 
-    const [feedingHistory, setFeedingHistory] = useState<{ type: string; duration: number }[]>([]);
-
-    const router = useRouter()
-    const leftIntervalId = useRef<NodeJS.Timeout | null>(null);
-    const rightIntervalId = useRef<NodeJS.Timeout | null>(null);
-
-    const [activeTimer, setActiveTimer] = useState<'left' | 'right' | null>(null);
-
-
-    const formatTime = (seconds: number) => {
+    const router = useRouter();
+    const leftStartTime = useRef<Date | null>(null);
+    const rightStartTime = useRef<Date | null>(null);
+    
+    const formatTime = (seconds : any) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     };
 
-    const toggleLeftTimer = () => {
-        if (activeTimer === 'left') {
-            clearInterval(leftIntervalId.current!);
-            leftIntervalId.current = null;
-            setActiveTimer(null);
-        } else {
-            if (activeTimer === 'right') {
-                clearInterval(rightIntervalId.current!);
-                rightIntervalId.current = null;
-                setActiveTimer(null);
+    useEffect(() => {
+        const resumeTimer = async () => {
+            try {
+                const savedLeftTime = await AsyncStorage.getItem('leftStartTime');
+                const savedRightTime = await AsyncStorage.getItem('rightStartTime');
+
+                if (savedLeftTime && !activeTimer) {
+                    leftStartTime.current = new Date(parseInt(savedLeftTime));
+                    startLeftTimer();
+                } else if (savedRightTime && !activeTimer) {
+                    rightStartTime.current = new Date(parseInt(savedRightTime));
+                    startRightTimer();
+                }
+            } catch (error) {
+                console.error('Error resuming timers:', error);
             }
-
-            leftIntervalId.current = setInterval(() => {
-                setLeftTimer(prev => prev + 1);
-            }, 1000);
-            setActiveTimer('left');
-        }
-    }
-
-    const toggleRightTimer = () => {
-        if (activeTimer === 'right') {
-            clearInterval(rightIntervalId.current!);
-            rightIntervalId.current = null;
-            setActiveTimer(null);
-        } else {
-            if (activeTimer === 'left') {
-                clearInterval(leftIntervalId.current!);
-                leftIntervalId.current = null;
-                setActiveTimer(null);
-            }
-
-            rightIntervalId.current = setInterval(() => {
-                setRightTimer(prev => prev + 1);
-            }, 1000);
-            setActiveTimer('right');
-        }
-    };
-
-    const resetTimer = () => {
-        clearInterval(leftIntervalId.current!);
-        clearInterval(rightIntervalId.current!);
-    
-        setLeftTimer(0);
-        setRightTimer(0);
-    
-        setActiveTimer(null);
-    };
-
-    const stopTimers = () => {
-        if (leftTimer > 0) {
-            setFeedingHistory(prev => [...prev, { type: 'Left', duration: leftTimer }]);
-        }
-        if (rightTimer > 0) {
-            setFeedingHistory(prev => [...prev, { type: 'Right', duration: rightTimer }]);
-        }
-
-        clearInterval(leftIntervalId.current!);
-        clearInterval(rightIntervalId.current!);
-        leftIntervalId.current = null;
-        rightIntervalId.current = null;
-
-        setLeftTimer(0);
-        setRightTimer(0);
-        setActiveTimer(null);
-        setOpenDialog(true);
-        router.push('/dialogs/feedingHistory' as any)
-    };
+        };
+        
+        resumeTimer();
+    }, []);
 
     return (
-        <ScreenWrapper bg='white'>
+        <ScreenWrapper bg="white">
             <ScrollView style={styles.container}>
-            <View style={styles.headerProfile}>
-                <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
-                <Text style={styles.header}>Add feed</Text>
-                <Image source={profile} style={styles.avatar} />
-            </View>
-
-            <View style={styles.tabContainer}>
-                <View style={styles.toggleContainer}>
-                    <TouchableOpacity 
-                        style={[styles.toggleUnselected, selectedOption === 'Breastfeeding' && styles.toggleButton]}
-                        onPress={() => setSelectedOption('Breastfeeding')}
-                    >
-                        <Text style={styles.toggleText}>Breastfeeding</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.toggleUnselected, selectedOption === 'Bottle Feeding' && styles.toggleButton]}
-                        onPress={() => setSelectedOption('Bottle Feeding')}
-                    >
-                        <Text style={styles.toggleText}>Bottle Feeding</Text>
-                    </TouchableOpacity>
+                <View style={styles.headerProfile}>
+                    <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
+                    <Text style={styles.header}>Add feed</Text>
+                    <Image source={profile} style={styles.avatar} />
                 </View>
-            </View>
 
-            {selectedOption === 'Breastfeeding' ? (
-                <View>
+                <View style={styles.tabContainer}>
+                    <View style={styles.toggleContainer}>
+                        <TouchableOpacity
+                            style={[styles.toggleUnselected, selectedOption === 'Breastfeeding' && styles.toggleButton]}
+                            onPress={() => setSelectedOption('Breastfeeding')}
+                        >
+                            <Text style={styles.toggleText}>Breastfeeding</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.toggleUnselected, selectedOption === 'Bottle Feeding' && styles.toggleButton]}
+                            onPress={() => setSelectedOption('Bottle Feeding')}
+                        >
+                            <Text style={styles.toggleText}>Bottle Feeding</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {selectedOption === 'Breastfeeding' ? (
+                    <View>
+                        <View style={styles.timerContainer}>
+                            <Text style={styles.timerText}>Tap the L or R button {'\n'}to start the timer</Text>
+                            <View style={styles.circleContainer}>
+                                <View>
+                                    <TouchableOpacity
+                                        style={styles.circle}
+                                        onPress={startLeftTimer}
+                                    >
+                                        <Text style={styles.circleText}>L</Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.singleCirle}>{formatTime(leftTimer)}</Text>
+                                </View>
+
+                                <View>
+                                    <TouchableOpacity
+                                        style={styles.circle}
+                                        onPress={startRightTimer}
+                                    >
+                                        <Text style={styles.circleText}>R</Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.singleCirle}>{formatTime(rightTimer)}</Text>
+                                </View>
+                            </View>
+
+                            <TouchableOpacity style={styles.button}>
+                                <Text style={styles.buttonText}>Add manual entry</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {activeTimer && (
+                            <View style={styles.actionButtonContainer}>
+                                <TouchableOpacity
+                                    style={styles.actionbutton}
+                                    onPress={stopTimers}
+                                >
+                                    <Text style={styles.actionbuttonText}>Reset</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.actionbutton}
+                                    onPress={stopTimers}
+                                >
+                                    <Text style={styles.actionbuttonText}>Stop</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
+                ) : (
                     <View style={styles.timerContainer}>
-                        <Text style={styles.timerText}>Tap the L or R button {'\n'}to start the timer</Text>
-                        <View style={styles.circleContainer}>
-                            <View>
-                                <TouchableOpacity 
-                                    style={styles.circle} 
-                                    onPress={toggleLeftTimer}
-                                >
-                                    <Text style={styles.circleText}>L</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.singleCirle}>{formatTime(leftTimer)}</Text>
-                            </View>
+                        <View style={styles.circleContainer2}>
+                            <TouchableOpacity style={styles.circle}>
+                                <Text style={styles.circleText2}>Breast{'\n'} milk</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.circle}>
+                                <Text style={styles.circleText2}>Formula</Text>
+                            </TouchableOpacity>
+                        </View>
 
-                            <View>
-                                <TouchableOpacity 
-                                    style={styles.circle} 
-                                    onPress={toggleRightTimer}
-                                >
-                                    <Text style={styles.circleText}>R</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.singleCirle}>{formatTime(rightTimer)}</Text>
+                        <View style={styles.boxContainer}>
+                            <View style={styles.horizontalLine} />
+                            <View style={styles.enterBox}>
+                                <Text style={styles.bottleText}>Feed</Text>
+                                <Text>Enter</Text>
                             </View>
+                            <View style={styles.horizontalLine} />
+                            <View style={styles.enterBox}>
+                                <Text style={styles.bottleText}>Amount</Text>
+                                <Text>Add</Text>
+                            </View>
+                            <View style={styles.horizontalLine} />
                         </View>
 
                         <TouchableOpacity style={styles.button}>
-                            <Text style={styles.buttonText}>Add manual entry</Text>
+                            <Text style={styles.buttonText}>Save feed</Text>
                         </TouchableOpacity>
                     </View>
-
-                    {activeTimer && (
-                        <View style={styles.actionButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.actionbutton}
-                                onPress={resetTimer}
-                            >
-                                <Text style={styles.actionbuttonText}>Reset</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.actionbutton}
-                                onPress={stopTimers}
-                            >
-                                <Text style={styles.actionbuttonText}>Stop</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-
-                    
-                </View>
-
-            ) : (
-            <View style={styles.timerContainer}>
-                
-                <View style={styles.circleContainer2}>
-                    <TouchableOpacity style={styles.circle}>
-                        <Text style={styles.circleText2}>Breast{'\n'} milk</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.circle}>
-                    <Text style={styles.circleText2}>Formula</Text>
-
-                    </TouchableOpacity>
-                </View>
-
-                <View style= {styles.boxContainer}>
-                    <View style={styles.horizontalLine} />
-                        <View style={styles.enterBox}>
-                            <Text style={styles.bottleText}>Feed</Text>
-                            <Text>Enter</Text>
-                        </View>
-                    <View style={styles.horizontalLine} />
-                        <View style={styles.enterBox}>
-                            <Text style={styles.bottleText}>Amount</Text>
-                            <Text>Add</Text>
-                        </View>
-                    <View style={styles.horizontalLine} />
-                </View>
-
-
-
-                <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Save feed </Text>
-            </TouchableOpacity>
-            </View>
-            ) }
-            
-        </ScrollView>
+                )}
+            </ScrollView>
         </ScreenWrapper>
     );
 }
@@ -412,31 +355,5 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         textAlignVertical: 'center',
         textAlign: 'center'
-    },
-    infoContainer: {
-        marginTop: 20,
-        padding: 10,
-        alignItems: 'center',
-    },
-    infoHeader: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    infoText: {
-        textAlign: 'center',
-        marginVertical: 10,
-    },
-    readMore: {
-        color: '#007BFF',
-    },
-    summaryButton: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: '#e0e0e0',
-        borderRadius: 5,
-    },
-    summaryButtonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
+    }
 });
