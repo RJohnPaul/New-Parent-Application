@@ -6,11 +6,14 @@ import { supabase } from '../supabase';
 import { useRouter } from 'expo-router';
 import { getUserData } from '../services/userService'
 import { User } from '@supabase/auth-js';
+import { TimerProvider } from '@/constants/TimerContext';
 
 const _layout = () => {
   return (
     <AuthProvider>
-      <MainLayout />
+      <TimerProvider>
+        <MainLayout />
+      </TimerProvider>
     </AuthProvider>
   );
 }

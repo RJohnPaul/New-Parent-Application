@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React , { useState } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,10 @@ import {
   Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import ScreenWrapper from '../../components/ScreenWrapper';
+import ScreenWrapper from '@/components/ScreenWrapper';
 import { supabase } from '../../supabase';
 import { useRouter } from 'expo-router';
+import { Colors } from '@/constants/Colors';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
@@ -103,7 +104,7 @@ export default function HomePage() {
           <IconWithLabel 
             image={feedingImage} 
             label="Feeding" 
-            onPress={() => router.push('/dialogs/feeding')} 
+            onPress={() => router.push('/dialogs/feeding' as any)} 
           />
           <IconWithLabel 
             image={sleepImage} 
@@ -150,14 +151,13 @@ export default function HomePage() {
         <TouchableOpacity style={styles.linkContainer}>
           <Text style={styles.TextHeader}>Baby Care</Text>
         </TouchableOpacity>
-      </ScrollView>
     </ScreenWrapper>
   );
 }
 
 function IconWithLabel({ image, label, onPress }: IconWithLabelProps) {
   return (
-    <TouchableOpacity style={styles.iconContainer} onPress={() => alert(label)}>
+    <TouchableOpacity style={styles.iconContainer} onPress={onPress}>
       <Image source={image} style={styles.iconImage} accessibilityLabel={label} />
       <Text style={styles.iconLabel}>{label}</Text>
     </TouchableOpacity>
@@ -224,6 +224,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center',
+  },
+  linkContainer: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+  },
+  TextHeader: {
+    color: 'black',
+    fontSize: 23,
+    fontWeight: '500',
   },
 });
 //hi

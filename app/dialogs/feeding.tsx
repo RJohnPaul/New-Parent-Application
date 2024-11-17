@@ -4,10 +4,11 @@ import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet } from 'rea
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useTimer } from '@/components/timerContext'; // Import useTimer hook from TimerContext
+import { useTimer } from '@/constants/TimerContext'; // Import useTimer hook from TimerContext
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import  {hp, wp}  from '@/helpers/common';
 import {Colors} from '@/constants/Colors'
+import _layout from '@/app/(tabs)/_layout';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
@@ -15,7 +16,7 @@ const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-you
 
 export default function AddFeedScreen() {
     const [selectedOption, setSelectedOption] = useState('Breastfeeding');
-    const { leftTimer, rightTimer, activeTimer, startLeftTimer, startRightTimer, stopTimers } = useTimer(); // Use context values
+    const { leftTimer, rightTimer, activeTimer, startLeftTimer, startRightTimer, stopTimers, resetTimers } = useTimer(); // Use context values
 
     const router = useRouter();
     const leftStartTime = useRef<Date | null>(null);
@@ -109,7 +110,7 @@ export default function AddFeedScreen() {
                             <View style={styles.actionButtonContainer}>
                                 <TouchableOpacity
                                     style={styles.actionbutton}
-                                    onPress={stopTimers}
+                                    onPress={resetTimers}
                                 >
                                     <Text style={styles.actionbuttonText}>Reset</Text>
                                 </TouchableOpacity>

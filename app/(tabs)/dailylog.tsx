@@ -6,8 +6,8 @@ import  ScreenWrapper  from '../../components/ScreenWrapper'
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
 const sleepImage = require('../../assets/images/sleep.png'); 
-const nappyImage = require('../../assets/images/nappy.png');
-const growthImage = require('../../assets/images/growth.png'); 
+const nappyImage = require('../../assets/images/nappy1.png');
+const growthImage = require('../../assets/images/growth1.png'); 
 const healthImage = require('../../assets/images/health.png');
 
 export default function Tab() {
@@ -89,8 +89,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   imageBox: {
+
     alignItems: 'center',
-    padding: 20,
+    padding: 10,
     borderRadius: 8,
     marginBottom: 16,
     width: '48%', 
@@ -104,9 +105,9 @@ const styles = StyleSheet.create({
     color: 'black', // Adjust color as needed for better readability
   },
   iconImage: {
-    width: 100,
+    marginTop: 30,
+    width: 200,
     height: 100,
-    resizeMode: 'contain',
-    margin:10,
+    resizeMode: 'center',
   },
 });

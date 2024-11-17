@@ -4,15 +4,13 @@ import { View, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import Tracking from '../tracking/Tracker';
-
-
+import  Tracking  from '@/app/tracking/Tracker';
 
 export default function Layout() {
   return (
     <View style={styles.container}>
       <View style={styles.feedTrackingContainer}>
-        <Tracking />
+      <Tracking />
       </View>
       <Tabs screenOptions={{ tabBarActiveTintColor: Colors.highlight, headerShown: false }}>
       
