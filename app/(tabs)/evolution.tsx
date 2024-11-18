@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import  ScreenWrapper  from '../../components/ScreenWrapper'
 
-
+const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const weekImage = require('../../assets/images/weekEvolution.png');
 const monthImage = require('../../assets/images/monthEvolution.png');
 
@@ -13,42 +13,63 @@ export default function BabyEvolution() {
   return (
 
     <View style={styles.container}>
+      <View style={styles.header}>
       <Text style={styles.title}>Evolution</Text>
+      <TouchableOpacity onPress={() => router.push('/dialogs/myprofile' as any)}>
+        <Image
+          source={profile}
+          style={styles.avatar}
+        />
+        </TouchableOpacity>
+      </View>
+      
       <View style={styles.imageContainer}>
-        <View style={styles.imageWrapper}>
-        <TouchableOpacity onPress={() => router.push('/evolutionPresets/week1' as any)}>
-          <Image 
-            source={weekImage}
-            style={styles.image}
-          />
-           
-          <Text style={styles.label}>1st - 8th Week</Text>
+      <View style={styles.flexContainer}>
+        <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
+        <Text style={styles.imageText}>1st to 8th week</Text>
+          <TouchableOpacity onPress={() => router.push('/evolutionPresets/week1' as any)}>
+            <Image source={weekImage} style={styles.iconImage}/>
           </TouchableOpacity>
+        </LinearGradient>
+
+        <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
+        <Text style={styles.imageText}>2nd - 12th month</Text>
+          <TouchableOpacity onPress={() => router.push('/evolutionPresets/month3' as any)}>
+            <Image source={monthImage} style={styles.iconImage}/>
+          </TouchableOpacity>
+        </LinearGradient>
+
         </View>
        
-        <View style={styles.imageWrapper}>
-        <TouchableOpacity onPress={() => router.push('/evolutionPresets/month3' as any)}>
-          <Image 
-            source={monthImage}
-            style={styles.image}
-          />
-          <Text style={styles.label}>2nd - 12th Month</Text>
-          </TouchableOpacity>
+        
         </View>
       </View>
-    </View>
+  
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 40,
+    flex: 1,
+    padding: 16,
     backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 60,
+    paddingTop: 30
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    
   },
   imageContainer: {
     flexDirection: 'row',
@@ -57,22 +78,40 @@ const styles = StyleSheet.create({
     
    
   },
-  imageWrapper: {
+  flexContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  imageText: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    fontSize: 17,
+    fontWeight: 'light',
+    color: 'black', // Adjust color as needed for better readability
+  },
+  iconImage: {
+    marginTop: 30,
+    width: 200,
+    height: 100,
+    resizeMode: 'center',
+  },
+ 
+  imageBox: {
+
     alignItems: 'center',
-    backgroundColor: '#CBE6F9',
-    borderRadius: 12,
-    width: 153,
-    height: 160
-  
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 16,
+    width: '85%', 
   },
   image: {
-    width: 130,
+    width: 110,
     height: 140,
     borderRadius: 10,
     marginBottom: -3.5,
   },
-  label: {
-    fontSize: 18,
-  },
+  
 });
 

@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import  ScreenWrapper  from '../../components/ScreenWrapper'
 
 
+const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const week4Image = require('../../assets/images/4week 1.png');
 
 
@@ -16,7 +18,10 @@ const BabyInfoScreen = () => {
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+      <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.push('/(tabs)/evolution')} />
         <Text style={styles.headerText}>Evolution</Text>
+        <Image source={profile} style={styles.avatar} />
+        </View>
         
         <View style={styles.weeksContainer}>
         <TouchableOpacity onPress={() => router.push('/evolutionPresets/week1' as any)}>
@@ -56,7 +61,7 @@ const BabyInfoScreen = () => {
            
             </View>
           
-        </View>
+        
         
       
 
@@ -141,15 +146,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    padding: 18,
-    marginBottom: 10,
+   
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    padding:17
  },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     
   },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+},
   weeksContainer: {
     flexDirection: 'row',
     marginTop: 20,

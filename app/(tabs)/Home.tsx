@@ -22,6 +22,34 @@ const nappyImage = require('../../assets/images/nappy.png');
 const growthImage = require('../../assets/images/growth home.png');
 const healthImage = require('../../assets/images/health home.png');
 
+const articles = [
+  {
+    id: 1,
+    title: "Your baby's cues and signals",
+    description: 'Babies communicate in many different ways. There are subtle signs you can look out for when he is tired...',
+    image: require('../../assets/images/art1.png'), 
+    type: 'Blog'
+  }
+];
+ const article1 = [ {
+    id: 2,
+    title: "How to stay relaxed when your baby won't eat",
+    description: 'We all know that in order for our babies to grow and thrive, they need to be taking in nutrients and gett...',
+    image: require('../../assets/images/art2.png'), 
+    type: 'Guide'
+  }
+];
+ const article2 = [  {
+    id: 3,
+    title: "A letter to you, from your baby",
+    description: 'To you, the one who loves me unconditionally...',
+    image: require('../../assets/images/art3.png'), 
+    type: 'Blog'
+
+  }
+];
+
+
 type IconWithLabelProps = {
   image: any;
   label: string;
@@ -85,19 +113,19 @@ export default function HomePage() {
     }
   };
 
-  const onLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      Alert.alert('Sign Out', 'Error signing out!');
-    }
-  };
+  
+
+ 
+  
 
   return (
     <ScreenWrapper bg="white">
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.greeting}>Hi Hinata</Text>
+          <TouchableOpacity onPress={() => router.push('/dialogs/myprofile' as any)}>
           <Image source={profile} style={styles.avatar} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.iconsRow}>
@@ -119,12 +147,12 @@ export default function HomePage() {
           <IconWithLabel 
             image={growthImage} 
             label="Growth" 
-            onPress={() => router.push('/')} 
+            onPress={() => router.push('/dialogs/growth')} 
           />
           <IconWithLabel 
             image={healthImage} 
             label="Health" 
-            onPress={() => router.push('/')} 
+            onPress={() => router.push('/dialogs/health')} 
           />
         </View>
 
@@ -145,12 +173,60 @@ export default function HomePage() {
             "Raising a child is like planting a seed and watching it grow into a beautiful flower." — Lisa Wingate
           </Text>
         </View>
+        <Text style={styles.TextHeader}>Baby Care</Text>
+        <View>
+          {articles.map((article) => (
+            <View key={article.id} style={styles.articleCard}>
+              <Image source={article.image} style={styles.articleImage} />
+              <Text style={styles.articleTitle}>{article.title}</Text>
+              <Text style={styles.articleDescription}>{article.description}</Text>
+              <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article1' as any)}>
+              
+                <Text style={styles.articleButtonText}>Read</Text>
 
-        <Button title="Logout" onPress={onLogout} />
+                <Text style={styles.articleType}>{article.type}</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+</View>
+
+<View>
+{article1.map((article) => (
+  <View key={article.id} style={styles.articleCard}>
+    <Image source={article.image} style={styles.articleImage} />
+    <Text style={styles.articleTitle}>{article.title}</Text>
+    <Text style={styles.articleDescription}>{article.description}</Text>
+    <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article2' as any)}>
+    
+      <Text style={styles.articleButtonText}>Read</Text>
+
+      <Text style={styles.articleType}>{article.type}</Text>
+    </TouchableOpacity>
+  </View>
+))}
+  </View>
+
+
+  <View>
+{article2.map((article) => (
+  <View key={article.id} style={styles.articleCard}>
+    <Image source={article.image} style={styles.articleImage} />
+    <Text style={styles.articleTitle}>{article.title}</Text>
+    <Text style={styles.articleDescription}>{article.description}</Text>
+    <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article3' as any)}>
+    
+      <Text style={styles.articleButtonText}>Read</Text>
+
+      <Text style={styles.articleType}>{article.type}</Text>
+    </TouchableOpacity>
+  </View>
+))}
+  </View>
+
+      
       </ScrollView>
-        <TouchableOpacity style={styles.linkContainer}>
-          <Text style={styles.TextHeader}>Baby Care</Text>
-        </TouchableOpacity>
+       
     </ScreenWrapper>
   );
 }
@@ -233,6 +309,49 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 23,
     fontWeight: '500',
+    padding: 10
   },
+  articleCard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  articleImage: {
+    width: '100%',
+    height: 150,
+    resizeMode: 'cover',
+  },
+  articleTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    margin: 10,
+  },
+  articleDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginHorizontal: 10,
+    marginBottom: 10,
+  },
+  articleButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#e0f7fa',
+  },
+  articleButtonText: {
+    color: '#00796b',
+    fontWeight: 'bold',
+  },
+  articleType: {
+    color: '#00796b',
+  },
+
 });
 //hi
