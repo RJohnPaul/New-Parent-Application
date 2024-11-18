@@ -11,11 +11,13 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { Colors } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
 
 export default function memories() {
+  const router = useRouter();
   const [images, setImages] = useState(Array(16).fill(null));
 
   // Function to pick an image
@@ -69,10 +71,12 @@ export default function memories() {
       <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Memories</Text>
+        <TouchableOpacity onPress={() => router.push('/dialogs/myprofile' as any)}>
         <Image
           source={profile}
           style={styles.avatar}
         />
+        </TouchableOpacity>
       </View>
       <View style={styles.grid}>
         {memories.map((memory, index) => (

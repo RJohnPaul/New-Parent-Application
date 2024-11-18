@@ -17,10 +17,12 @@ export default function Tab() {
 <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hi Hinata</Text>
+        <TouchableOpacity onPress={() => router.push('/dialogs/myprofile' as any)}>
         <Image
           source={profile}
           style={styles.avatar}
         />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.flexContainer}>
