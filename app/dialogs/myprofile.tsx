@@ -3,15 +3,18 @@ import { View, TextInput, Text, Image, Button, StyleSheet, Alert } from 'react-n
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../supabase';
+import { useUser } from '../UserContext'; // Adjust the path as needed
 
 const ProfileScreen = () => {
   const router = useRouter();
+  const { user } = useUser();
   const [profilePic, setProfilePic] = useState('');
   const [name, setName] = useState('');
   const [parentname, setParentname] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
 
+  // Logout function
   const onLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -19,28 +22,62 @@ const ProfileScreen = () => {
     }
   };
 
+  // Update function
+  const onUpdate = async () => {
+    try {
+      if (!user) {
+        Alert.alert('Update Failed', 'Unable to retrieve user information.');
+        return;
+      }
+
+      // Update the specific user's row
+      const { error } = await supabase
+        .from('Profiles')
+        .update({
+          baby_name: name,
+          name: parentname,
+          email: email,
+          dob: dob,
+        })
+        .eq('email', user.email);
+
+      if (error) throw error;
+
+      Alert.alert('Success', 'Profile updated successfully!');
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Update Error:', error.message);
+      } else {
+        console.error('Update Error:', error);
+      }
+      Alert.alert('Error', 'Failed to update profile.');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
+        <View style={styles.head}>
+          <Text style={styles.headerText}>My Profile</Text>
+        </View>
+      </View>
 
-<View style={styles.header}>
-<MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()}/>  
-    <View style={styles.head}> <Text style={styles.headerText}>My Profile</Text></View> 
-    </View>
-        
-        
-        
+      {/* Profile Picture */}
+      <View style={styles.profilepic}>
+        <Image
+          source={
+            profilePic
+              ? { uri: profilePic }
+              : require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg')
+          }
+          style={styles.profilePic}
+        />
+      </View>
 
-
-      <View style={styles.profilepic}>  
-      {/* Profile Picture Holder */}
-      <Image
-        source={profilePic ? { uri: profilePic } : require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg')}
-        style={styles.profilePic}
-      />
-       </View>
-
-      {/* Name Holder */}
-      <Text style={styles.label}> Baby's Name:</Text>
+      {/* Form Inputs */}
+      <Text style={styles.label}>Baby's Name:</Text>
       <TextInput
         placeholder="Enter your baby's name"
         value={name}
@@ -48,7 +85,7 @@ const ProfileScreen = () => {
         style={styles.input}
       />
 
-<Text style={styles.label}> Parent Name:</Text>
+      <Text style={styles.label}>Parent Name:</Text>
       <TextInput
         placeholder="Enter your name"
         value={parentname}
@@ -56,7 +93,7 @@ const ProfileScreen = () => {
         style={styles.input}
       />
 
-<Text style={styles.label}> Email:</Text>
+      <Text style={styles.label}>Email:</Text>
       <TextInput
         placeholder="Enter your email"
         value={email}
@@ -64,17 +101,23 @@ const ProfileScreen = () => {
         style={styles.input}
       />
 
-      {/* DOB Holder */}
       <Text style={styles.label}>Date of Birth:</Text>
       <TextInput
-        placeholder="Enter your baby,s date of birth (e.g., YYYY-MM-DD)"
+        placeholder="Enter your baby's date of birth (e.g., YYYY-MM-DD)"
         value={dob}
         onChangeText={setDob}
         style={styles.input}
       />
 
+      {/* Update Button */}
+      <View style={styles.buttonWrapper}>
+        <Button title="Update" onPress={onUpdate} />
+      </View>
+
       {/* Logout Button */}
-      <Button title="Logout" onPress={onLogout} />
+      <View style={styles.buttonWrapper}>
+        <Button title="Logout" onPress={onLogout} />
+      </View>
     </View>
   );
 };
@@ -84,36 +127,26 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-    
-    
-    
-    
   },
-  head:{
+  head: {
     alignItems: 'center',
-    
-    
-
-
   },
   profilepic: {
-    alignItems: 'center'
-
+    alignItems: 'center',
   },
-  
+  buttonWrapper: {
+    marginBottom: 15, // Adjust the spacing as needed
+  },
   header: {
-   
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding:17,
-    
- },
+    padding: 17,
+  },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginRight: 110
-    
+    marginRight: 110,
   },
   profilePic: {
     width: 150,
@@ -138,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default ProfileScreen;

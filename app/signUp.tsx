@@ -8,12 +8,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { supabase } from '../supabase';
 import { hp, wp } from '@/helpers/common';
 import { Colors } from '@/constants/Colors';
+import { useUser } from './UserContext'; // Import useUser
 
 // Utility function to generate a 5-digit random ID
 const generateRandomID = () => Math.floor(10000 + Math.random() * 90000);
 
 const SignUp = () => {
   const router = useRouter();
+  const { setUser } = useUser(); // Get setUser from useUser
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +35,7 @@ const SignUp = () => {
     const randomID = generateRandomID();
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: trimmedEmail,
         password: trimmedPassword,
       });
@@ -46,6 +48,7 @@ const SignUp = () => {
 
       if (insertError) throw insertError;
 
+      setUser(data.user); // Set the user in the context
       setShowCongrats(true);
     } catch (error) {
       Alert.alert('Sign-up Error', (error as Error).message);

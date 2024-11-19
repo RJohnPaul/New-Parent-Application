@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Button,
   Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -14,6 +13,7 @@ import ScreenWrapper from '@/components/ScreenWrapper';
 import { supabase } from '../../supabase';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { useUser } from '../UserContext'; // Import useUser
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
@@ -21,6 +21,7 @@ const sleepImage = require('../../assets/images/sleep.png');
 const nappyImage = require('../../assets/images/nappy.png');
 const growthImage = require('../../assets/images/growth home.png');
 const healthImage = require('../../assets/images/health home.png');
+const babyImage = require('../../assets/images/babyImage.png'); // Add baby image
 
 const articles = [
   {
@@ -31,7 +32,7 @@ const articles = [
     type: 'Blog'
   }
 ];
- const article1 = [ {
+const article1 = [ {
     id: 2,
     title: "How to stay relaxed when your baby won't eat",
     description: 'We all know that in order for our babies to grow and thrive, they need to be taking in nutrients and gett...',
@@ -39,16 +40,14 @@ const articles = [
     type: 'Guide'
   }
 ];
- const article2 = [  {
+const article2 = [  {
     id: 3,
     title: "A letter to you, from your baby",
     description: 'To you, the one who loves me unconditionally...',
     image: require('../../assets/images/art3.png'), 
     type: 'Blog'
-
   }
 ];
-
 
 type IconWithLabelProps = {
   image: any;
@@ -58,8 +57,29 @@ type IconWithLabelProps = {
 
 export default function HomePage() {
   const router = useRouter();
-
+  const { user } = useUser(); // Get the logged-in user
+  const [userName, setUserName] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('Profiles')
+          .select('name')
+          .eq('email', user.email)
+          .single();
+
+        if (error) {
+          console.error('Error fetching user name:', error);
+        } else {
+          setUserName(data.name);
+        }
+      }
+    };
+
+    fetchUserName();
+  }, [user]);
 
   const pickAndUploadImage = async () => {
     try {
@@ -90,11 +110,19 @@ export default function HomePage() {
 
   const uploadImage = async (uri: string) => {
     try {
+      if (!user) {
+        Alert.alert('Error', 'User not authenticated.');
+        return;
+      }
+
       const response = await fetch(uri);
       const blob = await response.blob();
 
       const fileName = `baby-photo-${Date.now()}.jpg`;
-      const { data, error } = await supabase.storage.from('images').upload(fileName, blob);
+      const { data, error } = await supabase.storage.from('images').upload(fileName, blob, {
+        cacheControl: '3600',
+        upsert: false,
+      });
 
       if (error) {
         console.error('Supabase Upload Error:', error.message);
@@ -113,18 +141,13 @@ export default function HomePage() {
     }
   };
 
-  
-
- 
-  
-
   return (
     <ScreenWrapper bg="white">
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>Hi Hinata</Text>
+          <Text style={styles.greeting}>Hi {userName}</Text>
           <TouchableOpacity onPress={() => router.push('/dialogs/myprofile' as any)}>
-          <Image source={profile} style={styles.avatar} />
+            <Image source={profile} style={styles.avatar} />
           </TouchableOpacity>
         </View>
 
@@ -157,16 +180,14 @@ export default function HomePage() {
         </View>
 
         <View style={styles.imageContainer}>
-          {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.babyPhoto} />
-          ) : (
-            <Text>No image selected yet.</Text>
-          )}
+          <TouchableOpacity onPress={pickAndUploadImage}>
+            {imageUri ? (
+              <Image source={{ uri: imageUri }} style={styles.babyPhoto} />
+            ) : (
+              <Image source={babyImage} style={styles.babyPhoto} />
+            )}
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.linkContainer} onPress={pickAndUploadImage}>
-          <Text style={styles.TextHeader}>Upload Baby Photo</Text>
-        </TouchableOpacity>
 
         <View style={styles.quoteContainer}>
           <Text style={styles.quote}>
@@ -181,52 +202,41 @@ export default function HomePage() {
               <Text style={styles.articleTitle}>{article.title}</Text>
               <Text style={styles.articleDescription}>{article.description}</Text>
               <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article1' as any)}>
-              
                 <Text style={styles.articleButtonText}>Read</Text>
-
                 <Text style={styles.articleType}>{article.type}</Text>
               </TouchableOpacity>
             </View>
           ))}
+        </View>
 
-</View>
+        <View>
+          {article1.map((article) => (
+            <View key={article.id} style={styles.articleCard}>
+              <Image source={article.image} style={styles.articleImage} />
+              <Text style={styles.articleTitle}>{article.title}</Text>
+              <Text style={styles.articleDescription}>{article.description}</Text>
+              <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article2' as any)}>
+                <Text style={styles.articleButtonText}>Read</Text>
+                <Text style={styles.articleType}>{article.type}</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
 
-<View>
-{article1.map((article) => (
-  <View key={article.id} style={styles.articleCard}>
-    <Image source={article.image} style={styles.articleImage} />
-    <Text style={styles.articleTitle}>{article.title}</Text>
-    <Text style={styles.articleDescription}>{article.description}</Text>
-    <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article2' as any)}>
-    
-      <Text style={styles.articleButtonText}>Read</Text>
-
-      <Text style={styles.articleType}>{article.type}</Text>
-    </TouchableOpacity>
-  </View>
-))}
-  </View>
-
-
-  <View>
-{article2.map((article) => (
-  <View key={article.id} style={styles.articleCard}>
-    <Image source={article.image} style={styles.articleImage} />
-    <Text style={styles.articleTitle}>{article.title}</Text>
-    <Text style={styles.articleDescription}>{article.description}</Text>
-    <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article3' as any)}>
-    
-      <Text style={styles.articleButtonText}>Read</Text>
-
-      <Text style={styles.articleType}>{article.type}</Text>
-    </TouchableOpacity>
-  </View>
-))}
-  </View>
-
-      
+        <View>
+          {article2.map((article) => (
+            <View key={article.id} style={styles.articleCard}>
+              <Image source={article.image} style={styles.articleImage} />
+              <Text style={styles.articleTitle}>{article.title}</Text>
+              <Text style={styles.articleDescription}>{article.description}</Text>
+              <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article3' as any)}>
+                <Text style={styles.articleButtonText}>Read</Text>
+                <Text style={styles.articleType}>{article.type}</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
       </ScrollView>
-       
     </ScreenWrapper>
   );
 }
@@ -351,7 +361,5 @@ const styles = StyleSheet.create({
   },
   articleType: {
     color: '#00796b',
-  },
-
+  },
 });
-//hi
