@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {  useRouter } from 'expo-router';
-
+import { useRouter } from 'expo-router';
+import { supabase } from '../../supabase';
+import { useUser } from '../UserContext'; // Import useUser
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
@@ -12,16 +13,46 @@ const AddGrowthDataScreen: React.FC = () => {
   const [time, setTime] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
-  const router = useRouter()
+  const router = useRouter();
+  const { user } = useUser(); // Get the logged-in user
+
+  const saveGrowthData = async () => {
+    if (!user) {
+      Alert.alert('Error', 'User not authenticated.');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('Profiles')
+        .update({
+          GROW_DATE: date,
+          GROW_TIME: time,
+          GROW_HEIGHT: parseInt(height, 10),
+          GROW_WEIGHT: parseInt(weight, 10),
+        })
+        .eq('email', user.email);
+
+      if (error) {
+        console.error('Error saving growth data:', error);
+        Alert.alert('Error', 'Failed to save growth data.');
+      } else {
+        Alert.alert('Success', 'Growth data saved successfully.');
+      }
+    } catch (error) {
+      console.error('Error saving growth data:', error);
+      Alert.alert('Error', 'An error occurred while saving growth data.');
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-                <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
-                <Text style={styles.headerText}>Add growth data</Text>
-                <Image source={profile} style={styles.avatar} />
-            </View>
+        <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
+        <Text style={styles.headerText}>Add growth data</Text>
+        <Image source={profile} style={styles.avatar} />
+      </View>
 
       {/* Data Entry Fields */}
       <View style={styles.dataContainer}>
@@ -66,7 +97,7 @@ const AddGrowthDataScreen: React.FC = () => {
       </View>
 
       {/* Save Button */}
-      <TouchableOpacity style={styles.saveButton} onPress={() => console.log({ date, time, height, weight })}>
+      <TouchableOpacity style={styles.saveButton} onPress={saveGrowthData}>
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity>
 
@@ -89,19 +120,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-},
+  },
   dataContainer: {
     backgroundColor: '#CBE6F6',
     borderRadius: 8,

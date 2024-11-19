@@ -7,12 +7,15 @@ import { useRouter } from 'expo-router';
 import { getUserData } from '../services/userService'
 import { User } from '@supabase/auth-js';
 import { TimerProvider } from '@/constants/TimerContext';
+import { UserProvider } from './UserContext'; // Import UserProvider
 
 const _layout = () => {
   return (
     <AuthProvider>
       <TimerProvider>
-        <MainLayout />
+        <UserProvider>
+          <MainLayout />
+        </UserProvider>
       </TimerProvider>
     </AuthProvider>
   );

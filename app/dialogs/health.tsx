@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {  useRouter } from 'expo-router';
-import  ScreenWrapper  from '../../components/ScreenWrapper'
+import { useRouter } from 'expo-router';
+import { supabase } from "../../supabase"; // Ensure you import your Supabase client
+import { useUser } from '../UserContext'; // Adjust the path as needed
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
@@ -19,27 +20,78 @@ const VaccinationScreen: React.FC = () => {
     { age: '4 months', vaccines: ['6 in 1 vaccine (second dose)', 'MenB vaccine', 'Rotovirus oral vaccine'], status: [false, false, false] },
     { age: '6 months', vaccines: ['6 in 1 vaccine (third dose)', 'MenC vaccine', 'PCV'], status: [false, false, false] },
     { age: '10 months', vaccines: ['MMR', 'MenB vaccine'], status: [false, false] },
-    { age: '12 months', vaccines: ['Hib/MenC vaccine', 'PCV'], status: [false, false] }
+    { age: '12 months', vaccines: ['Hib/MenC vaccine', 'PCV'], status: [false, false] },
   ]);
-  const router = useRouter()
-  const markAsDone = (sectionIndex: number, vaccineIndex: number) => {
+  const router = useRouter();
+  const { user } = useUser();
+
+  // Update the database when a vaccine is marked as done
+  const markAsDone = async (sectionIndex: number, vaccineIndex: number) => {
     const updatedVaccines = [...vaccines];
     updatedVaccines[sectionIndex].status[vaccineIndex] = true;
     setVaccines(updatedVaccines);
+
+    // Map vaccine to its corresponding database column
+    const vaccineColumnMap: { [key: string]: string } = {
+      '6 in 1 vaccine': '2M_6in1',
+      'PCV': '2M_PCV',
+      'MenB vaccine': '2M_MENB',
+      'Rotovirus oral vaccine': '2M_ROV',
+      '6 in 1 vaccine (second dose)': '4M_6in1',
+      'MenB vaccine (second dose)': '4M_MENB',
+      'Rotovirus oral vaccine (second dose)': '4M_ROV',
+      '6 in 1 vaccine (third dose)': '6M_6in1',
+      'MenC vaccine': '6M_MENC',
+      'PCV (third dose)': '6M_PCV',
+      'MMR': '10M_MMR',
+      'MenB vaccine (third dose)': '10M_MENB',
+      'Hib/MenC vaccine': '12M_MENC',
+      'PCV (fourth dose)': '12M_PCV',
+    };
+
+    const vaccineName = updatedVaccines[sectionIndex].vaccines[vaccineIndex];
+    const columnName = vaccineColumnMap[vaccineName];
+
+    if (!columnName) {
+      Alert.alert('Error', 'Vaccine mapping not found.');
+      return;
+    }
+
+    try {
+      if (!user) {
+        Alert.alert('Error', 'User not logged in.');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('Profiles')
+        .update({ [columnName]: true }) // Update the column to true
+        .eq('email', user.email); // Use the user's email to identify their row
+
+      if (error) {
+        console.error(error);
+        Alert.alert('Error', 'Failed to update the vaccine status.');
+      } else {
+        Alert.alert('Success', `Marked ${vaccineName} as done.`);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Something went wrong.');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+        <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
+        <Text style={styles.headerText}>Health</Text>
+        <Image source={profile} style={styles.avatar} />
+      </View>
 
-<View style={styles.header}>
-<MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
-<Text style={styles.headerText}>Health</Text>
-<Image source={profile} style={styles.avatar} />
+      <View style={styles.tag}>
+        <Text style={styles.tagText}>Vaccination</Text>
+      </View>
 
-</View>
-
-<View style={styles.tag}>
-<Text style={styles.tagText}>Vaccination</Text></View>
       {vaccines.map((section, sectionIndex) => (
         <View key={sectionIndex} style={styles.sectionContainer}>
           <Text style={styles.ageText}>At {section.age}</Text>
@@ -48,7 +100,7 @@ const VaccinationScreen: React.FC = () => {
               <Text style={styles.vaccineText}>{vaccine}</Text>
               {section.status[vaccineIndex] ? (
                 <TouchableOpacity style={styles.done}>
-                <Text style={styles.doneText}>Done</Text>
+                  <Text style={styles.doneText}>Done</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity style={styles.button} onPress={() => markAsDone(sectionIndex, vaccineIndex)}>
@@ -80,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
- },
+  },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -89,7 +141,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-},
+  },
   tag: {
     backgroundColor: '#F9FDFF',
     borderRadius: 10,
@@ -97,22 +149,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
-    shadowRadius: 8
-
+    shadowRadius: 8,
   },
   tagText: {
     fontSize: 17,
     fontWeight: 'light',
     color: '#0078A4',
-
   },
   ageText: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#0078A4'
+    color: '#0078A4',
   },
   vaccineContainer: {
     flexDirection: 'row',
@@ -138,7 +188,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
-
   },
   doneText: {
     color: '#28a745',

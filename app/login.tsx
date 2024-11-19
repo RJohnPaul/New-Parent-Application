@@ -8,9 +8,11 @@ import { Colors } from '@/constants/Colors';
 import Input from '@/components/Input';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { supabase } from '../supabase';
+import { useUser } from './UserContext'; // Import useUser
 
 const Login = () => {
   const router = useRouter();
+  const { setUser } = useUser(); // Get setUser from useUser
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,13 +32,14 @@ const Login = () => {
       password: Password
     });
   
-
     if (error) {
       Alert.alert('Login', error.message);
-    } 
+    } else {
+      setUser(data.user); // Set the user in the context
+      router.replace('/(tabs)/Home'); // Navigate to the home screen
+    }
     setLoading(false);
   };
-  
 
   return (
     <ScreenWrapper bg="white">
@@ -96,13 +99,11 @@ const Login = () => {
 
 export default Login;
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 45,
     paddingHorizontal: wp(5),
-
   },
   welcomeText: {
     fontSize: hp(5),
@@ -118,7 +119,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.text,
     fontFamily: 'SFProDisplay-Regular',
-
   },
   forgetPassword: {
     textAlign: 'right',
