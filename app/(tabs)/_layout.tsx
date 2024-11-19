@@ -1,10 +1,15 @@
 // app/_layout.js
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Tabs } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import  Tracking  from '@/app/tracking/Tracker';
+
+const home_icon = require('../../assets/images/home_icon.png')
+const dailyLog = require('../../assets/images/dailyLog.png')
+const memories = require('../../assets/images/memories.png')
+const evolution = require('../../assets/images/evolution.png')
 
 export default function Layout() {
   return (
@@ -14,21 +19,38 @@ export default function Layout() {
       </View>
       <Tabs screenOptions={{ tabBarActiveTintColor: Colors.highlight, headerShown: false }}>
       
-        <Tabs.Screen
+      <Tabs.Screen
           name="Home"
           options={{
             title: 'Home',
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="home" size={size} color={color} />
+              <Image
+                source={home_icon}
+                style={{
+                  width: size,
+                  height: size,
+                  tintColor: color, 
+                }}
+                resizeMode="contain"
+              />
             ),
           }}
+        
         />
         <Tabs.Screen
           name="dailylog"
           options={{
             title: 'Daily Log',
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="book" size={size} color={color} />
+              <Image
+                source={dailyLog}
+                style={{
+                  width: size,
+                  height: size,
+                  tintColor: color, 
+                }}
+                resizeMode="contain"
+              />
             ),
           }}
         />
@@ -37,7 +59,15 @@ export default function Layout() {
           options={{
             title: 'Memories',
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="calendar" size={size} color={color} />
+              <Image
+                source={memories}
+                style={{
+                  width: size,
+                  height: size,
+                  tintColor: color, 
+                }}
+                resizeMode="contain"
+              />
             ),
           }}
         />
@@ -46,7 +76,15 @@ export default function Layout() {
           options={{
             title: 'Evolution',
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="line-chart" size={size} color={color} />
+              <Image
+                source={evolution}
+                style={{
+                  width: size,
+                  height: size,
+                  tintColor: color, 
+}}
+                resizeMode="contain"
+              />
             ),
           }}
         />
@@ -62,7 +100,7 @@ const styles = StyleSheet.create({
   },
   feedTrackingContainer: {
     position: 'absolute',
-    bottom: 60, // Adjust this value based on the tab bar height to place FeedTracking above it
+    bottom: 60, 
     left: 0,
     right: 0,
     zIndex: 1,
