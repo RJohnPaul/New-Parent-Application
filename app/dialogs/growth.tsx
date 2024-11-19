@@ -102,7 +102,7 @@ const AddGrowthDataScreen: React.FC = () => {
       </TouchableOpacity>
 
       {/* Summary Button */}
-      <TouchableOpacity style={styles.summaryButton}>
+      <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/growthHistory' as any)}>
         <Text style={styles.summaryButtonText}>Summary</Text>
       </TouchableOpacity>
     </ScrollView>

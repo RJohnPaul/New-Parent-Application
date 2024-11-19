@@ -90,6 +90,7 @@ export default function sleeping() {
             
 
             </View>
+            
             {isRunning && (
                         <View style={styles.actionButtonContainer}>
                             <TouchableOpacity
@@ -235,4 +236,5 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         textAlign: 'center'
     },
+    
 })

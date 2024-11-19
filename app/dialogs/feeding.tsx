@@ -105,6 +105,7 @@ export default function AddFeedScreen() {
                                 <Text style={styles.buttonText}>Add manual entry</Text>
                             </TouchableOpacity>
                         </View>
+                        
 
                         {activeTimer && (
                             <View style={styles.actionButtonContainer}>
@@ -356,5 +357,6 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         textAlignVertical: 'center',
         textAlign: 'center'
-    }
+    },
+    
 });
