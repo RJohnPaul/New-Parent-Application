@@ -122,7 +122,7 @@ const AddGrowthDataScreen: React.FC = () => {
           <Text style={styles.dataLabel}>Date</Text>
           <TextInput
             style={styles.dataInput}
-            placeholder="Enter date"
+            placeholder="Enter date - YYYY-MM-DD"
             value={date}
             onChangeText={setDate}
           />
