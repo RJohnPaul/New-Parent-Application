@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import ScreenWrapper from '@/components/ScreenWrapper';
 
 
 const babyImage = require('../../assets/images/art2.png'); 

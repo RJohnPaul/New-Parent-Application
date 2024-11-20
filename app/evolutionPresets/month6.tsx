@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import  ScreenWrapper  from '../../components/ScreenWrapper'
+import  ScreenWrapper  from '../../components/ScreenWrapper';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const month6Image = require('../../assets/images/month6.png');
@@ -14,6 +14,7 @@ const month6Image = require('../../assets/images/month6.png');
 const BabyInfoScreen = () => {
     const router = useRouter();
   return (
+    <ScreenWrapper bg="white">
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
@@ -36,7 +37,7 @@ const BabyInfoScreen = () => {
             <Text style={styles.monthNumber}>5</Text></View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/evolutionPresets/month6' as any)}>
-            <View style={styles.month3}>
+            <View style={styles.month3s}>
             <Text style={styles.monthNumber}>6</Text></View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/evolutionPresets/month7' as any)}>
@@ -145,6 +146,7 @@ const BabyInfoScreen = () => {
 
 
     </ScrollView>
+    </ScreenWrapper>
   );
 };
 
@@ -188,6 +190,16 @@ const styles = StyleSheet.create({
    
     
 
+  },
+  month3s:{
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#CBE6F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    flexDirection: 'row',
   },
   monthNumber: {
     fontSize: 16,

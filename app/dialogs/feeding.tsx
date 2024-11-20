@@ -102,7 +102,7 @@ export default function AddFeedScreen() {
                             </View>
 
                             <TouchableOpacity style={styles.button}>
-                                <Text style={styles.buttonText}>Add manual entry</Text>
+                                <Text style={styles.buttonText}>Save</Text>
                             </TouchableOpacity>
                         </View>
                         
@@ -154,6 +154,10 @@ export default function AddFeedScreen() {
                         </TouchableOpacity>
                     </View>
                 )}
+                {/* Summary Button */}
+      <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/feedingHistory' as any)}>
+        <Text style={styles.summaryButtonText}>Summary</Text>
+      </TouchableOpacity>
             </ScrollView>
         </ScreenWrapper>
     );
@@ -358,5 +362,18 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         textAlign: 'center'
     },
+    summaryButton: {
+        backgroundColor: '#e0f7ff',
+        borderRadius: 9,
+        paddingVertical: 12,
+        alignItems: 'center',
+        marginTop: 10,
+        
+      },
+      summaryButtonText: {
+        fontSize: 18,
+        color: '#0078A4',
+        fontWeight: 'bold',
+      },
     
 });

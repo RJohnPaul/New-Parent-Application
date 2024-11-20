@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import  ScreenWrapper  from '../../components/ScreenWrapper'
+import  ScreenWrapper  from '../../components/ScreenWrapper';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const weekImage = require('../../assets/images/weekEvolution.png');
@@ -11,6 +11,7 @@ const monthImage = require('../../assets/images/monthEvolution.png');
 export default function BabyEvolution() {
   const router = useRouter();
   return (
+    <ScreenWrapper bg="white">
 
     <View style={styles.container}>
       <View style={styles.header}>
@@ -32,7 +33,7 @@ export default function BabyEvolution() {
           </TouchableOpacity>
         </LinearGradient>
 
-        <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
+        <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox1}>
         <Text style={styles.imageText}>2nd - 12th month</Text>
           <TouchableOpacity onPress={() => router.push('/evolutionPresets/month3' as any)}>
             <Image source={monthImage} style={styles.iconImage}/>
@@ -44,6 +45,7 @@ export default function BabyEvolution() {
         
         </View>
       </View>
+      </ScreenWrapper>
   
   );
 };
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 60,
-    paddingTop: 30
+    
   },
   avatar: {
     width: 40,
@@ -74,6 +76,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: "center",
     
     
    
@@ -82,6 +85,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    alignItems: "center",
+    
   },
   imageText: {
     position: 'absolute',
@@ -104,7 +109,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
-    width: '85%', 
+    width: '35%', 
+  },
+  imageBox1: {
+
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 16,
+    width: '35%',
+    right: 95,
   },
   image: {
     width: 110,
