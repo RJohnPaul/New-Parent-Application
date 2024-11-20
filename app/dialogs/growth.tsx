@@ -10,7 +10,6 @@ const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-you
 const AddGrowthDataScreen: React.FC = () => {
   // State for holding input data
   const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const router = useRouter();
@@ -23,18 +22,81 @@ const AddGrowthDataScreen: React.FC = () => {
     }
 
     try {
-      const { error } = await supabase
+      // Fetch the current profile data to determine which columns are available
+      const { data: profileData, error: fetchError } = await supabase
         .from('Profiles')
-        .update({
+        .select('GROW_DATE, GROW_HEIGHT, GROW_WEIGHT, GROW_DATE_2, GROW_HEIGHT_2, GROW_WEIGHT_2, GROW_DATE_3, GROW_HEIGHT_3, GROW_WEIGHT_3, GROW_DATE_4, GROW_HEIGHT_4, GROW_WEIGHT_4, GROW_DATE_5, GROW_HEIGHT_5, GROW_WEIGHT_5')
+        .eq('email', user.email)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching profile data:', fetchError);
+        Alert.alert('Error', 'Failed to fetch profile data.');
+        return;
+      }
+
+      // Determine the next available set of columns
+      let updateData = {};
+      if (!profileData.GROW_DATE) {
+        updateData = {
           GROW_DATE: date,
-          GROW_TIME: time,
           GROW_HEIGHT: parseInt(height, 10),
           GROW_WEIGHT: parseInt(weight, 10),
-        })
+        };
+      } else if (!profileData.GROW_DATE_2) {
+        updateData = {
+          GROW_DATE_2: date,
+          GROW_HEIGHT_2: parseInt(height, 10),
+          GROW_WEIGHT_2: parseInt(weight, 10),
+        };
+      } else if (!profileData.GROW_DATE_3) {
+        updateData = {
+          GROW_DATE_3: date,
+          GROW_HEIGHT_3: parseInt(height, 10),
+          GROW_WEIGHT_3: parseInt(weight, 10),
+        };
+      } else if (!profileData.GROW_DATE_4) {
+        updateData = {
+          GROW_DATE_4: date,
+          GROW_HEIGHT_4: parseInt(height, 10),
+          GROW_WEIGHT_4: parseInt(weight, 10),
+        };
+      } else if (!profileData.GROW_DATE_5) {
+        updateData = {
+          GROW_DATE_5: date,
+          GROW_HEIGHT_5: parseInt(height, 10),
+          GROW_WEIGHT_5: parseInt(weight, 10),
+        };
+      } else {
+        // All slots are filled, start replacing from the first slot
+        updateData = {
+          GROW_DATE: date,
+          GROW_HEIGHT: parseInt(height, 10),
+          GROW_WEIGHT: parseInt(weight, 10),
+          GROW_DATE_2: profileData.GROW_DATE,
+          GROW_HEIGHT_2: profileData.GROW_HEIGHT,
+          GROW_WEIGHT_2: profileData.GROW_WEIGHT,
+          GROW_DATE_3: profileData.GROW_DATE_2,
+          GROW_HEIGHT_3: profileData.GROW_HEIGHT_2,
+          GROW_WEIGHT_3: profileData.GROW_WEIGHT_2,
+          GROW_DATE_4: profileData.GROW_DATE_3,
+          GROW_HEIGHT_4: profileData.GROW_HEIGHT_3,
+          GROW_WEIGHT_4: profileData.GROW_WEIGHT_3,
+          GROW_DATE_5: profileData.GROW_DATE_4,
+          GROW_HEIGHT_5: profileData.GROW_HEIGHT_4,
+          GROW_WEIGHT_5: profileData.GROW_WEIGHT_4,
+        };
+        Alert.alert('Notice', 'All growth data slots are filled. The oldest entry has been replaced.');
+      }
+
+      // Update the profile with the new growth data
+      const { error: updateError } = await supabase
+        .from('Profiles')
+        .update(updateData)
         .eq('email', user.email);
 
-      if (error) {
-        console.error('Error saving growth data:', error);
+      if (updateError) {
+        console.error('Error saving growth data:', updateError);
         Alert.alert('Error', 'Failed to save growth data.');
       } else {
         Alert.alert('Success', 'Growth data saved successfully.');
@@ -63,15 +125,6 @@ const AddGrowthDataScreen: React.FC = () => {
             placeholder="Enter date"
             value={date}
             onChangeText={setDate}
-          />
-        </View>
-        <View style={styles.dataRow}>
-          <Text style={styles.dataLabel}>Time</Text>
-          <TextInput
-            style={styles.dataInput}
-            placeholder="Add time"
-            value={time}
-            onChangeText={setTime}
           />
         </View>
         <View style={styles.dataRow}>
