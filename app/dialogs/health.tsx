@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
@@ -16,34 +16,99 @@ interface VaccineSection {
 }
 
 const VaccinationScreen: React.FC = () => {
-  const [vaccines, setVaccines] = useState<VaccineSection[]>([
-    { age: '2 months', vaccines: ['6 in 1 vaccine', 'PCV', 'MenB vaccine', 'Rotovirus oral vaccine'], status: [false, false, false, false] },
-    { age: '4 months', vaccines: ['6 in 1 vaccine (second dose)', 'MenB vaccine', 'Rotovirus oral vaccine'], status: [false, false, false] },
-    { age: '6 months', vaccines: ['6 in 1 vaccine (third dose)', 'MenC vaccine', 'PCV'], status: [false, false, false] },
-    { age: '10 months', vaccines: ['MMR', 'MenB vaccine'], status: [false, false] },
-    { age: '12 months', vaccines: ['Hib/MenC vaccine', 'PCV'], status: [false, false] },
-  ]);
+  const [vaccines, setVaccines] = useState<VaccineSection[]>([]);
   const router = useRouter();
   const { user } = useUser();
 
-  // Update the database when a vaccine is marked as done
-  const markAsDone = async (sectionIndex: number, vaccineIndex: number) => {
+  useEffect(() => {
+    const fetchVaccineData = async () => {
+      if (!user) {
+        Alert.alert('Error', 'User not authenticated.');
+        return;
+      }
+
+      try {
+        const { data: profileData, error } = await supabase
+          .from('Profiles')
+          .select('*')
+          .eq('email', user.email)
+          .single();
+
+        if (error) {
+          console.error('Error fetching vaccine data:', error);
+          Alert.alert('Error', 'Failed to fetch vaccine data.');
+          return;
+        }
+
+        if (profileData) {
+          const fetchedVaccines: VaccineSection[] = [
+            {
+              age: '2 Months',
+              vaccines: ['6-in-1 vaccine', 'PCV', 'MenB vaccine', 'Rotavirus vaccine'],
+              status: [
+                profileData['2M_6in1'],
+                profileData['2M_PCV'],
+                profileData['2M_MENB'],
+                profileData['2M_ROV'],
+              ],
+            },
+            {
+              age: '4 Months',
+              vaccines: ['6-in-1 vaccine', 'MenB vaccine', 'Rotavirus vaccine'],
+              status: [
+                profileData['4M_6in1'],
+                profileData['4M_MENB'],
+                profileData['4M_ROV'],
+              ],
+            },
+            {
+              age: '6 Months',
+              vaccines: ['6-in-1 vaccine', 'MenC vaccine', 'PCV'],
+              status: [
+                profileData['6M_6in1'],
+                profileData['6M_MENC'],
+                profileData['6M_PCV'],
+              ],
+            },
+            {
+              age: '10 Months',
+              vaccines: ['MMR', 'MenB vaccine (third dose)'],
+              status: [
+                profileData['10M_MMR'],
+                profileData['10M_MENB'],
+              ],
+            },
+            {
+              age: '12 Months',
+              vaccines: ['Hib/MenC vaccine', 'PCV (fourth dose)'],
+              status: [
+                profileData['12M_MENC'],
+                profileData['12M_PCV'],
+              ],
+            },
+          ];
+          setVaccines(fetchedVaccines);
+        }
+      } catch (error) {
+        console.error('Error fetching vaccine data:', error);
+        Alert.alert('Error', 'An error occurred while fetching vaccine data.');
+      }
+    };
+
+    fetchVaccineData();
+  }, [user]);
+
+  const toggleVaccineStatus = async (sectionIndex: number, vaccineIndex: number) => {
     const updatedVaccines = [...vaccines];
-    updatedVaccines[sectionIndex].status[vaccineIndex] = true;
+    updatedVaccines[sectionIndex].status[vaccineIndex] = !updatedVaccines[sectionIndex].status[vaccineIndex];
     setVaccines(updatedVaccines);
 
-    // Map vaccine to its corresponding database column
     const vaccineColumnMap: { [key: string]: string } = {
-      '6 in 1 vaccine': '2M_6in1',
-      'PCV': '2M_PCV',
-      'MenB vaccine': '2M_MENB',
-      'Rotovirus oral vaccine': '2M_ROV',
-      '6 in 1 vaccine (second dose)': '4M_6in1',
-      'MenB vaccine (second dose)': '4M_MENB',
-      'Rotovirus oral vaccine (second dose)': '4M_ROV',
-      '6 in 1 vaccine (third dose)': '6M_6in1',
+      '6-in-1 vaccine': sectionIndex === 0 ? '2M_6in1' : sectionIndex === 1 ? '4M_6in1' : '6M_6in1',
+      'PCV': sectionIndex === 0 ? '2M_PCV' : '6M_PCV',
+      'MenB vaccine': sectionIndex === 0 ? '2M_MENB' : sectionIndex === 1 ? '4M_MENB' : '10M_MENB',
+      'Rotavirus vaccine': sectionIndex === 0 ? '2M_ROV' : '4M_ROV',
       'MenC vaccine': '6M_MENC',
-      'PCV (third dose)': '6M_PCV',
       'MMR': '10M_MMR',
       'MenB vaccine (third dose)': '10M_MENB',
       'Hib/MenC vaccine': '12M_MENC',
@@ -60,55 +125,53 @@ const VaccinationScreen: React.FC = () => {
 
     try {
       if (!user) {
-        Alert.alert('Error', 'User not logged in.');
+        Alert.alert('Error', 'User not authenticated.');
         return;
       }
 
       const { error } = await supabase
         .from('Profiles')
-        .update({ [columnName]: true }) // Update the column to true
-        .eq('email', user.email); // Use the user's email to identify their row
+        .update({ [columnName]: updatedVaccines[sectionIndex].status[vaccineIndex] })
+        .eq('email', user.email);
 
       if (error) {
-        console.error(error);
-        Alert.alert('Error', 'Failed to update the vaccine status.');
+        console.error('Error updating vaccine status:', error);
+        Alert.alert('Error', 'Failed to update vaccine status.');
       } else {
-        Alert.alert('Success', `Marked ${vaccineName} as done.`);
+        Alert.alert('Success', 'Vaccine status updated successfully.');
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Something went wrong.');
+      console.error('Error updating vaccine status:', error);
+      Alert.alert('Error', 'An error occurred while updating vaccine status.');
     }
   };
 
   return (
+<<<<<<< HEAD
     <ScreenWrapper bg="white">
     <ScrollView contentContainerStyle={styles.container}>
+=======
+    <ScrollView style={styles.container}>
+>>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
       <View style={styles.header}>
         <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         <Text style={styles.headerText}>Health</Text>
         <Image source={profile} style={styles.avatar} />
       </View>
-
-      <View style={styles.tag}>
-        <Text style={styles.tagText}>Vaccination</Text>
-      </View>
-
       {vaccines.map((section, sectionIndex) => (
         <View key={sectionIndex} style={styles.sectionContainer}>
-          <Text style={styles.ageText}>At {section.age}</Text>
+          <Text style={styles.sectionTitle}>{section.age}</Text>
           {section.vaccines.map((vaccine, vaccineIndex) => (
             <View key={vaccineIndex} style={styles.vaccineContainer}>
               <Text style={styles.vaccineText}>{vaccine}</Text>
-              {section.status[vaccineIndex] ? (
-                <TouchableOpacity style={styles.done}>
-                  <Text style={styles.doneText}>Done</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity style={styles.button} onPress={() => markAsDone(sectionIndex, vaccineIndex)}>
-                  <Text style={styles.buttonText}>Mark as done</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                style={section.status[vaccineIndex] ? styles.doneButton : styles.button}
+                onPress={() => toggleVaccineStatus(sectionIndex, vaccineIndex)}
+              >
+                <Text style={styles.buttonText}>
+                  {section.status[vaccineIndex] ? 'Done' : 'Mark as done'}
+                </Text>
+              </TouchableOpacity>
             </View>
           ))}
         </View>
@@ -122,12 +185,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: '#fff',
-  },
-  sectionContainer: {
-    marginBottom: 20,
-    backgroundColor: '#CBE6F6',
-    borderRadius: 8,
-    padding: 16,
   },
   header: {
    
@@ -144,6 +201,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
+<<<<<<< HEAD
   tag: {
     backgroundColor: '#F9FDFF',
     borderRadius: 10,
@@ -155,17 +213,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
+=======
+  sectionContainer: {
+    marginBottom: 20,
+    backgroundColor: '#CBE6F6',
+    borderRadius: 8,
+    padding: 16,
+>>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
   },
-  tagText: {
-    fontSize: 17,
-    fontWeight: 'light',
-    color: '#0078A4',
-  },
-  ageText: {
+  sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#0078A4',
   },
   vaccineContainer: {
     flexDirection: 'row',
@@ -174,30 +233,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   vaccineText: {
-    fontSize: 16.5,
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#007BFF',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
+    padding: 10,
+    borderRadius: 5,
+  },
+  doneButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
   },
   buttonText: {
-    color: '#ffffff',
-    fontSize: 14,
-  },
-  done: {
-    backgroundColor: '#fff',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-  doneText: {
-    color: '#28a745',
-    fontSize: 16.5,
-    fontWeight: 'bold',
-    alignItems: 'center',
-    justifyContent: 'center',
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
