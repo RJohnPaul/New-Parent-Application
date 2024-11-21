@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import  ScreenWrapper  from '../../components/ScreenWrapper';
 import { supabase } from "../../supabase"; // Ensure you import your Supabase client
 import { useUser } from '../UserContext'; // Adjust the path as needed
 
@@ -146,7 +147,12 @@ const VaccinationScreen: React.FC = () => {
   };
 
   return (
+<<<<<<< HEAD
+    <ScreenWrapper bg="white">
+    <ScrollView contentContainerStyle={styles.container}>
+=======
     <ScrollView style={styles.container}>
+>>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
       <View style={styles.header}>
         <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         <Text style={styles.headerText}>Health</Text>
@@ -171,17 +177,17 @@ const VaccinationScreen: React.FC = () => {
         </View>
       ))}
     </ScrollView>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   header: {
-    padding: 18,
-    marginBottom: 10,
+   
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -195,11 +201,25 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
+<<<<<<< HEAD
+  tag: {
+    backgroundColor: '#F9FDFF',
+    borderRadius: 10,
+    padding: 5,
+    marginTop: 15,
+    marginBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+=======
   sectionContainer: {
     marginBottom: 20,
     backgroundColor: '#CBE6F6',
     borderRadius: 8,
     padding: 16,
+>>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
   },
   sectionTitle: {
     fontSize: 20,

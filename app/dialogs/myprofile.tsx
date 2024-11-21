@@ -3,6 +3,7 @@ import { View, TextInput, Text, Image, Button, StyleSheet, Alert } from 'react-n
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../supabase';
+import  ScreenWrapper  from '../../components/ScreenWrapper';
 import { useUser } from '../UserContext'; // Adjust the path as needed
 
 const ProfileScreen = () => {
@@ -55,6 +56,7 @@ const ProfileScreen = () => {
   };
 
   return (
+    <ScreenWrapper bg="white">
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
@@ -119,6 +121,7 @@ const ProfileScreen = () => {
         <Button title="Logout" onPress={onLogout} />
       </View>
     </View>
+    </ScreenWrapper>
   );
 };
 

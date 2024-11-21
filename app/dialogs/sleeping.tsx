@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -127,7 +127,7 @@ export default function Sleeping() {
 
   return (
     <ScreenWrapper bg='white'>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
           <Text style={styles.header}>Sleeping</Text>
@@ -144,7 +144,7 @@ export default function Sleeping() {
             <Text style={styles.singleCirle}>{formatTime(Timer)}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={saveSleepEntry}>
-            <Text style={styles.buttonText}>Add manual entry</Text>
+            <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
 
@@ -158,7 +158,11 @@ export default function Sleeping() {
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      
+      <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/sleepingHistory' as any)}>
+        <Text style={styles.summaryButtonText}>Summary</Text>
+      </TouchableOpacity>
+      </ScrollView>
     </ScreenWrapper>
   );
 }
@@ -282,5 +286,18 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     textAlignVertical: 'center',
     textAlign: 'center',
+  },
+  summaryButton: {
+    backgroundColor: '#e0f7ff',
+    borderRadius: 9,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 10,
+    
+  },
+  summaryButtonText: {
+    fontSize: 18,
+    color: '#0078A4',
+    fontWeight: 'bold',
   },
 });

@@ -4,6 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../supabase';
 import { useUser } from '../UserContext'; // Import useUser
+import  ScreenWrapper  from '../../components/ScreenWrapper';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
@@ -108,6 +109,7 @@ const AddGrowthDataScreen: React.FC = () => {
   };
 
   return (
+    <ScreenWrapper bg="white">
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
       <View style={styles.header}>
@@ -122,7 +124,11 @@ const AddGrowthDataScreen: React.FC = () => {
           <Text style={styles.dataLabel}>Date</Text>
           <TextInput
             style={styles.dataInput}
+<<<<<<< HEAD
+            placeholder="Enter date (YYYY-MM-DD)"
+=======
             placeholder="Enter date - YYYY-MM-DD"
+>>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
             value={date}
             onChangeText={setDate}
           />
@@ -131,7 +137,7 @@ const AddGrowthDataScreen: React.FC = () => {
           <Text style={styles.dataLabel}>Height</Text>
           <TextInput
             style={styles.dataInput}
-            placeholder="Add height"
+            placeholder="Add height in inches"
             value={height}
             onChangeText={setHeight}
             keyboardType="numeric" // Use numeric keyboard for numbers
@@ -141,7 +147,7 @@ const AddGrowthDataScreen: React.FC = () => {
           <Text style={styles.dataLabel}>Weight</Text>
           <TextInput
             style={styles.dataInput}
-            placeholder="Add weight"
+            placeholder="Add weight in kgs"
             value={weight}
             onChangeText={setWeight}
             keyboardType="numeric" // Use numeric keyboard for numbers
@@ -159,6 +165,7 @@ const AddGrowthDataScreen: React.FC = () => {
         <Text style={styles.summaryButtonText}>Summary</Text>
       </TouchableOpacity>
     </ScrollView>
+    </ScreenWrapper>
   );
 };
 
@@ -187,8 +194,8 @@ const styles = StyleSheet.create({
   dataContainer: {
     backgroundColor: '#CBE6F6',
     borderRadius: 8,
-    padding: 8,
-    marginBottom: 400,
+    padding: 12,
+    marginBottom: 300,
   },
   dataRow: {
     flexDirection: 'row',
@@ -230,6 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     paddingVertical: 12,
     alignItems: 'center',
+    marginTop: 10,
   },
   summaryButtonText: {
     fontSize: 18,

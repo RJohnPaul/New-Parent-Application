@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import  ScreenWrapper  from '../../components/ScreenWrapper'
+import  ScreenWrapper  from '../../components/ScreenWrapper';
 
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
@@ -15,8 +15,10 @@ const week2Image = require('../../assets/images/2week 1.png');
 const BabyInfoScreen = () => {
     const router = useRouter();
   return (
+
     <ScreenWrapper bg='white'>
       <ScrollView style={styles.container}>
+
       {/* Header */}
       <View style={styles.header}>
       <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.push('/(tabs)/evolution')} />
@@ -30,7 +32,7 @@ const BabyInfoScreen = () => {
             <Text style={styles.weekNumber}>1</Text></View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/evolutionPresets/week2' as any)}>
-            <View style={styles.week1}>
+            <View style={styles.week1s}>
             <Text style={styles.weekNumber}>2</Text></View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/evolutionPresets/week3' as any)}>
@@ -180,9 +182,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 8,
     flexDirection: 'row',
-   
-    
-
+  },
+  week1s:{
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#CBE6F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    flexDirection: 'row',
   },
   weekNumber: {
     fontSize: 16,
