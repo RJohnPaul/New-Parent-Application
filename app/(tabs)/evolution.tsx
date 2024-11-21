@@ -58,10 +58,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-
-    marginBottom: 60,
-    
-
     marginBottom: 40,
   },
   avatar: {
@@ -123,8 +119,6 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 10,
     marginBottom: -3.5,
-    width: '48%', 
-
   },
   
 });
