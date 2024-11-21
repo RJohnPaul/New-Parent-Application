@@ -20,7 +20,7 @@ const BabyInfoScreen = () => {
       <View style={styles.header}>
       <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.push('/(tabs)/evolution')} />
         <Text style={styles.headerText}>Evolution</Text>
-        <Image source={profile} style={styles.avatar} />
+        
         </View>
         
         <View style={styles.monthsContainer}>
@@ -175,6 +175,8 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
+    alignItems: 'center',
+    right: 130,
     
   },
   avatar: {

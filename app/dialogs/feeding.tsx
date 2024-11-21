@@ -123,7 +123,7 @@ export default function AddFeedScreen() {
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
           <Text style={styles.header}>Add feed</Text>
-          <Image source={profile} style={styles.avatar} />
+          
         </View>
 
         <View style={styles.tabContainer}>
@@ -266,6 +266,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
+    right: 140,
   },
   headerProfile: {
     flexDirection: 'row',
