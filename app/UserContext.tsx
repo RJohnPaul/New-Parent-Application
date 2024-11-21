@@ -1,28 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '../supabase'; // Adjust the path as needed
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface UserContextType {
   user: any;
-  setUser: React.Dispatch<React.SetStateAction<any>>;
+  setUser: (user: any) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Error fetching session:', sessionError);
-        return;
-      }
-      setUser(sessionData?.session?.user);
-    };
-
-    fetchUser();
-  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

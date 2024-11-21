@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Text, Image, Button, StyleSheet, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../supabase';
-import  ScreenWrapper  from '../../components/ScreenWrapper';
+import ScreenWrapper from '../../components/ScreenWrapper';
 import { useUser } from '../UserContext'; // Adjust the path as needed
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const [profilePic, setProfilePic] = useState('');
   const [name, setName] = useState('');
   const [parentname, setParentname] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setProfilePic(user.profilePic);
+      setName(user.name);
+      setParentname(user.parentname);
+      setEmail(user.email);
+      setDob(user.dob);
+    }
+  }, [user]);
 
   // Logout function
   const onLogout = async () => {
@@ -44,6 +54,8 @@ const ProfileScreen = () => {
 
       if (error) throw error;
 
+      // Update the user context
+      setUser({ ...user, name, parentname, email, dob });
       Alert.alert('Success', 'Profile updated successfully!');
     } catch (error) {
       if (error instanceof Error) {
@@ -57,70 +69,70 @@ const ProfileScreen = () => {
 
   return (
     <ScreenWrapper bg="white">
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
-        <View style={styles.head}>
-          <Text style={styles.headerText}>My Profile</Text>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
+          <View style={styles.head}>
+            <Text style={styles.headerText}>My Profile</Text>
+          </View>
+        </View>
+
+        {/* Profile Picture */}
+        <View style={styles.profilepic}>
+          <Image
+            source={
+              profilePic
+                ? { uri: profilePic }
+                : require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg')
+            }
+            style={styles.profilePic}
+          />
+        </View>
+
+        {/* Form Inputs */}
+        <Text style={styles.label}>Baby's Name:</Text>
+        <TextInput
+          placeholder="Enter your baby's name"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+        />
+
+        <Text style={styles.label}>Parent Name:</Text>
+        <TextInput
+          placeholder="Enter your name"
+          value={parentname}
+          onChangeText={setParentname}
+          style={styles.input}
+        />
+
+        <Text style={styles.label}>Email:</Text>
+        <TextInput
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+        />
+
+        <Text style={styles.label}>Date of Birth:</Text>
+        <TextInput
+          placeholder="Enter your baby's date of birth (e.g., YYYY-MM-DD)"
+          value={dob}
+          onChangeText={setDob}
+          style={styles.input}
+        />
+
+        {/* Update Button */}
+        <View style={styles.buttonWrapper}>
+          <Button title="Update" onPress={onUpdate} />
+        </View>
+
+        {/* Logout Button */}
+        <View style={styles.buttonWrapper}>
+          <Button title="Logout" onPress={onLogout} />
         </View>
       </View>
-
-      {/* Profile Picture */}
-      <View style={styles.profilepic}>
-        <Image
-          source={
-            profilePic
-              ? { uri: profilePic }
-              : require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg')
-          }
-          style={styles.profilePic}
-        />
-      </View>
-
-      {/* Form Inputs */}
-      <Text style={styles.label}>Baby's Name:</Text>
-      <TextInput
-        placeholder="Enter your baby's name"
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Parent Name:</Text>
-      <TextInput
-        placeholder="Enter your name"
-        value={parentname}
-        onChangeText={setParentname}
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Email:</Text>
-      <TextInput
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Date of Birth:</Text>
-      <TextInput
-        placeholder="Enter your baby's date of birth (e.g., YYYY-MM-DD)"
-        value={dob}
-        onChangeText={setDob}
-        style={styles.input}
-      />
-
-      {/* Update Button */}
-      <View style={styles.buttonWrapper}>
-        <Button title="Update" onPress={onUpdate} />
-      </View>
-
-      {/* Logout Button */}
-      <View style={styles.buttonWrapper}>
-        <Button title="Logout" onPress={onLogout} />
-      </View>
-    </View>
     </ScreenWrapper>
   );
 };
@@ -171,6 +183,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 5,
     fontWeight: 'bold',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
