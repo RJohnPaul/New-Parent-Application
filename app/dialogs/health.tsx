@@ -147,12 +147,9 @@ const VaccinationScreen: React.FC = () => {
   };
 
   return (
-<<<<<<< HEAD
     <ScreenWrapper bg="white">
     <ScrollView contentContainerStyle={styles.container}>
-=======
     <ScrollView style={styles.container}>
->>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
       <View style={styles.header}>
         <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         <Text style={styles.headerText}>Health</Text>
@@ -176,6 +173,7 @@ const VaccinationScreen: React.FC = () => {
           ))}
         </View>
       ))}
+    </ScrollView>
     </ScrollView>
     </ScreenWrapper>
   );
@@ -201,25 +199,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
-<<<<<<< HEAD
-  tag: {
-    backgroundColor: '#F9FDFF',
-    borderRadius: 10,
-    padding: 5,
-    marginTop: 15,
-    marginBottom: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-=======
   sectionContainer: {
     marginBottom: 20,
     backgroundColor: '#CBE6F6',
     borderRadius: 8,
     padding: 16,
->>>>>>> f42a5c40014d0c74ff0efcca2bae5c9f91d8d653
   },
   sectionTitle: {
     fontSize: 20,
