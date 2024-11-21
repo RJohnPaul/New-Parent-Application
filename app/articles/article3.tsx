@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import ScreenWrapper from '@/components/ScreenWrapper';
 
 
 const babyImage = require('../../assets/images/art3.png'); 
@@ -16,7 +17,8 @@ const router = useRouter();
 export default function BabyCuesPage() {
   return (
     
-    <ScrollView style={styles.container}>
+    <ScreenWrapper bg='white'>
+      <ScrollView style={styles.container}>
       <View style={styles.header}>
       <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         </View>
@@ -54,6 +56,7 @@ Your Baby ❤️
         </View>
       
     </ScrollView>
+    </ScreenWrapper>
   );
 }
 

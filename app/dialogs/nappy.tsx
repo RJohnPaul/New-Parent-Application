@@ -12,6 +12,7 @@ const mixed = require('../../assets/images/mixed.png');
 const solid = require('../../assets/images/solid.png');
 const wet = require('../../assets/images/wet.png');
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
+const diaper = require('../../assets/images/baby_diaper.png')
 
 export default function Nappy() {
   const [selectedOption, setSelectedOption] = useState('None');
@@ -150,6 +151,11 @@ export default function Nappy() {
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
+        <View>
+          <Text style={styles.instext}>How to change diaper</Text>
+          <Image source={diaper} style={styles.diaperImg}/>
+        </View>
+
       </ScrollView>
     </ScreenWrapper>
   );
@@ -165,6 +171,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  diaperImg: {
+    resizeMode: 'cover',
+    width: '100%',
+    margin: -10
+
+
   },
   headerProfile: {
     flexDirection: 'row',
@@ -238,4 +251,9 @@ const styles = StyleSheet.create({
     marginTop: hp(10),
     justifyContent: 'center',
   },
+  instext: {
+    color: '#4F8DD1',
+    fontSize: 16,
+    fontWeight: '600',
+  }
 });
