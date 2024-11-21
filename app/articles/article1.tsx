@@ -17,7 +17,8 @@ const router = useRouter();
 export default function BabyCuesPage() {
   return (
     
-    <ScrollView style={styles.container}>
+    <ScreenWrapper bg='white'>
+      <ScrollView style={styles.container}>
       <View style={styles.header}>
       <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         </View>
@@ -51,6 +52,7 @@ It’s also important to remember that interpreting baby cues is not always stra
         </View>
       </View>
     </ScrollView>
+    </ScreenWrapper>
   );
 }
 

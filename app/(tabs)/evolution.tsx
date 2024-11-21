@@ -24,7 +24,6 @@ export default function BabyEvolution() {
         </TouchableOpacity>
       </View>
       
-      <View style={styles.imageContainer}>
       <View style={styles.flexContainer}>
         <LinearGradient colors={['#FFFFFF', '#CBE6F9']} style={styles.imageBox}>
         <Text style={styles.imageText}>1st to 8th week</Text>
@@ -43,7 +42,6 @@ export default function BabyEvolution() {
         </View>
        
         
-        </View>
       </View>
       </ScreenWrapper>
   
@@ -54,14 +52,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+
     marginBottom: 60,
     
+
+    marginBottom: 40,
   },
   avatar: {
     width: 40,
@@ -77,9 +78,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: "center",
-    
-    
-   
   },
   flexContainer: {
     flexDirection: 'row',
@@ -94,7 +92,7 @@ const styles = StyleSheet.create({
     left: 8,
     fontSize: 17,
     fontWeight: 'light',
-    color: 'black', // Adjust color as needed for better readability
+    color: 'black', 
   },
   iconImage: {
     marginTop: 30,
@@ -125,6 +123,8 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 10,
     marginBottom: -3.5,
+    width: '48%', 
+
   },
   
 });

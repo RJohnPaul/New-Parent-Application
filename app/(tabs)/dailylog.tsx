@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     left: 8,
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'black', // Adjust color as needed for better readability
+    color: 'black', 
   },
   iconImage: {
     marginTop: 30,

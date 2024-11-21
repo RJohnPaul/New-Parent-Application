@@ -15,8 +15,10 @@ const week4Image = require('../../assets/images/4week 1.png');
 const BabyInfoScreen = () => {
     const router = useRouter();
   return (
-    <ScreenWrapper bg="white">
-    <ScrollView style={styles.container}>
+
+    <ScreenWrapper bg='white'>
+      <ScrollView style={styles.container}>
+
       {/* Header */}
       <View style={styles.header}>
       <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.push('/(tabs)/evolution')} />
@@ -145,6 +147,7 @@ const BabyInfoScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
     backgroundColor: '#fff',
   },
   header: {
@@ -152,7 +155,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding:17
  },
   headerText: {
     fontSize: 24,
