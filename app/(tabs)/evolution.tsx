@@ -16,12 +16,7 @@ export default function BabyEvolution() {
     <View style={styles.container}>
       <View style={styles.header}>
       <Text style={styles.title}>Evolution</Text>
-      <TouchableOpacity onPress={() => router.push('/dialogs/myprofile' as any)}>
-        <Image
-          source={profile}
-          style={styles.avatar}
-        />
-        </TouchableOpacity>
+      
       </View>
       
       <View style={styles.flexContainer}>
@@ -103,7 +98,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
-    width: '35%', 
+    width: '45%', 
   },
   imageBox1: {
 
@@ -111,8 +106,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
-    width: '35%',
-    right: 95,
+    width: '45%',
+    right: 12,
   },
   image: {
     width: 110,

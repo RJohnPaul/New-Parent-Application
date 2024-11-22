@@ -97,7 +97,7 @@ export default function Sleeping() {
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
           <Text style={styles.header}>Sleeping</Text>
-          <Image source={profile} style={styles.avatar} />
+         
         </View>
 
         <View style={styles.BoxContainer}>
@@ -146,6 +146,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
+    right: 135,
   },
   headerProfile: {
     flexDirection: 'row',

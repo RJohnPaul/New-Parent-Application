@@ -100,7 +100,7 @@ export default function Nappy() {
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
           <Text style={styles.header}>Nappy</Text>
-          <Image source={profile} style={styles.avatar} />
+         
         </View>
 
         <View style={styles.timerContainer}>
@@ -177,6 +177,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
+    right: 150,
   },
   diaperImg: {
     resizeMode: 'cover',
@@ -189,6 +191,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    
+   
   },
   avatar: {
     width: 40,

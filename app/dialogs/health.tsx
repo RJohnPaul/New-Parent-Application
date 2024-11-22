@@ -153,7 +153,7 @@ const VaccinationScreen: React.FC = () => {
       <View style={styles.header}>
         <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         <Text style={styles.headerText}>Health</Text>
-        <Image source={profile} style={styles.avatar} />
+        
       </View>
       {vaccines.map((section, sectionIndex) => (
         <View key={sectionIndex} style={styles.sectionContainer}>
@@ -193,6 +193,8 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
+    alignItems: 'center',
+    right: 130,
   },
   avatar: {
     width: 40,

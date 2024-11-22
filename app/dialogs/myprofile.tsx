@@ -98,6 +98,13 @@ const ProfileScreen = () => {
           onChangeText={setName}
           style={styles.input}
         />
+        <Text style={styles.label}> Baby's Date of Birth:</Text>
+        <TextInput
+          placeholder="Enter your baby's date of birth (e.g., YYYY-MM-DD)"
+          value={dob}
+          onChangeText={setDob}
+          style={styles.input}
+        />
 
         <Text style={styles.label}>Parent Name:</Text>
         <TextInput
@@ -115,13 +122,7 @@ const ProfileScreen = () => {
           style={styles.input}
         />
 
-        <Text style={styles.label}>Date of Birth:</Text>
-        <TextInput
-          placeholder="Enter your baby's date of birth (e.g., YYYY-MM-DD)"
-          value={dob}
-          onChangeText={setDob}
-          style={styles.input}
-        />
+       
 
         {/* Update Button */}
         <View style={styles.buttonWrapper}>
