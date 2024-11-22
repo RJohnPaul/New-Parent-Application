@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
@@ -7,56 +7,23 @@ import { hp, wp } from '@/helpers/common';
 import { Colors } from '@/constants/Colors';
 import { supabase } from '../../supabase';
 import { useUser } from '../UserContext'; // Import useUser
+import { useTimer } from '../../constants/TimerContext'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const smile = require('../../assets/images/Smile.png');
 const sleep = require('../../assets/images/Sleep (1).png');
-
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 
 export default function Sleeping() {
-  const [Timer, setTimer] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  let interval: any = null;
   const router = useRouter();
   const { user } = useUser(); // Get the logged-in user
+  const {  sleepTimer, activeTimer, startSleepTimer, stopTimers, resetTimers } = useTimer(); // Use TimerContext methods
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
-
-  const toggleTimer = () => {
-    if (isRunning) {
-      clearInterval(interval);
-      setIsRunning(false);
-    } else {
-      setIsRunning(true);
-    }
-  };
-
-  useEffect(() => {
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTimer((prevTime) => prevTime + 1);
-      }, 1000);
-    } else if (!isRunning && Timer !== 0) {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [isRunning]);
-
-  const stopTimer = () => {
-    setIsRunning(false);
-    clearInterval(interval);
-    router.push('/dialogs/sleepingHistory' as any);
-  };
-
-  // Function to reset the timer
-  const resetTimer = () => {
-    setIsRunning(false);
-    setTimer(0);
-    clearInterval(interval);
   };
 
   const saveSleepEntry = async () => {
@@ -66,10 +33,9 @@ export default function Sleeping() {
     }
 
     const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-    const formattedTime = formatTime(Timer); // Format the timer time
+    const formattedTime = formatTime(sleepTimer); // Format the sleep timer
 
     try {
-      // Fetch the current profile data to determine which columns are available
       const { data: profileData, error: fetchError } = await supabase
         .from('Profiles')
         .select('SLEEP_DATE_1, SLEEP_TIME_1, SLEEP_DATE_2, SLEEP_TIME_2, SLEEP_DATE_3, SLEEP_TIME_3, SLEEP_DATE_4, SLEEP_TIME_4')
@@ -82,7 +48,6 @@ export default function Sleeping() {
         return;
       }
 
-      // Determine the next available set of columns
       let updateData = {};
       if (!profileData.SLEEP_DATE_1) {
         updateData = { SLEEP_DATE_1: today, SLEEP_TIME_1: formattedTime };
@@ -93,7 +58,6 @@ export default function Sleeping() {
       } else if (!profileData.SLEEP_DATE_4) {
         updateData = { SLEEP_DATE_4: today, SLEEP_TIME_4: formattedTime };
       } else {
-        // All slots are filled, start replacing from the first slot
         updateData = {
           SLEEP_DATE_1: today,
           SLEEP_TIME_1: formattedTime,
@@ -107,7 +71,6 @@ export default function Sleeping() {
         Alert.alert('Notice', 'All sleep entries are filled. The oldest entry has been replaced.');
       }
 
-      // Update the profile with the new sleep entry
       const { error: updateError } = await supabase
         .from('Profiles')
         .update(updateData)
@@ -125,8 +88,11 @@ export default function Sleeping() {
     }
   };
 
+
+
+
   return (
-    <ScreenWrapper bg='white'>
+    <ScreenWrapper bg="white">
       <ScrollView style={styles.container}>
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
@@ -137,31 +103,34 @@ export default function Sleeping() {
         <View style={styles.BoxContainer}>
           <Text style={styles.timerText}>Tap to start the timer</Text>
           <View>
-            <TouchableOpacity style={styles.circle} onPress={toggleTimer}>
-              <Image style={styles.insideImage} source={isRunning ? sleep : smile} />
-              <Text style={styles.insideText}>{isRunning ? 'Hold' : 'Start'}</Text>
+            <TouchableOpacity style={styles.circle} onPress={startSleepTimer}>
+              <Image style={styles.insideImage} source={activeTimer === 'sleep' ? sleep : smile} />
+              <Text style={styles.insideText}>{activeTimer === 'sleep' ? 'Hold' : 'Start'}</Text>
             </TouchableOpacity>
-            <Text style={styles.singleCirle}>{formatTime(Timer)}</Text>
+            <Text style={styles.singleCirle}>{formatTime(sleepTimer)}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={saveSleepEntry}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
 
-        {isRunning && (
+        {activeTimer === 'sleep' && (
           <View style={styles.actionButtonContainer}>
-            <TouchableOpacity style={styles.actionbutton} onPress={resetTimer}>
+            <TouchableOpacity style={styles.actionbutton} onPress={resetTimers}>
               <Text style={styles.actionbuttonText}>Reset</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionbutton} onPress={stopTimer}>
+            <TouchableOpacity style={styles.actionbutton} onPress={stopTimers}>
               <Text style={styles.actionbuttonText}>Stop</Text>
             </TouchableOpacity>
           </View>
         )}
-      
-      <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/sleepingHistory' as any)}>
-        <Text style={styles.summaryButtonText}>Summary</Text>
-      </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.summaryButton}
+          onPress={() => router.push('/dialogs/sleepingHistory' as any)}
+        >
+          <Text style={styles.summaryButtonText}>Summary</Text>
+        </TouchableOpacity>
       </ScrollView>
     </ScreenWrapper>
   );

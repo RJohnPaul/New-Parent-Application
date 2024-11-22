@@ -4,11 +4,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type TimerContextType = {
     leftTimer: number;
     rightTimer: number;
-    activeTimer: 'left' | 'right' | null;
+    sleepTimer: number; // Add sleep timer
+    activeTimer: 'left' | 'right' | 'sleep' | null;
+    type: 'breastfeeding' | 'sleep';
+    setType: (newType: 'breastfeeding' | 'sleep') => void;
     startLeftTimer: () => void;
     startRightTimer: () => void;
+    startSleepTimer: () => void; // Start sleep timer
     stopTimers: () => void;
-    resetTimers: () => void;  // Add resetTimers method
+    resetTimers: () => void;
 };
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
@@ -16,15 +20,20 @@ const TimerContext = createContext<TimerContextType | undefined>(undefined);
 export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     const [leftTimer, setLeftTimer] = useState(0);
     const [rightTimer, setRightTimer] = useState(0);
-    const [activeTimer, setActiveTimer] = useState<'left' | 'right' | null>(null);
+    const [sleepTimer, setSleepTimer] = useState(0); // Sleep timer state
+    const [activeTimer, setActiveTimer] = useState<'left' | 'right' | 'sleep' | null>(null);
+    const [type, setType] = useState<'breastfeeding' | 'sleep'>('breastfeeding');
     const leftIntervalId = useRef<NodeJS.Timeout | null>(null);
     const rightIntervalId = useRef<NodeJS.Timeout | null>(null);
+    const sleepIntervalId = useRef<NodeJS.Timeout | null>(null); // Sleep interval ref
 
-    // Load timers from AsyncStorage when the app starts
     useEffect(() => {
         const loadTimers = async () => {
             const leftStartTime = await AsyncStorage.getItem('leftStartTime');
             const rightStartTime = await AsyncStorage.getItem('rightStartTime');
+            const sleepStartTime = await AsyncStorage.getItem('sleepStartTime'); // Load sleep start time
+            const savedType = await AsyncStorage.getItem('type');
+
             if (leftStartTime) {
                 const elapsedTime = Math.floor((Date.now() - Number(leftStartTime)) / 1000);
                 setLeftTimer(elapsedTime);
@@ -33,18 +42,20 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
                 const elapsedTime = Math.floor((Date.now() - Number(rightStartTime)) / 1000);
                 setRightTimer(elapsedTime);
             }
+            if (sleepStartTime) {
+                const elapsedTime = Math.floor((Date.now() - Number(sleepStartTime)) / 1000);
+                setSleepTimer(elapsedTime);
+            }
+            if (savedType) {
+                setType(savedType as 'breastfeeding' | 'sleep');
+            }
         };
         loadTimers();
     }, []);
 
     const startLeftTimer = () => {
-        // If right timer is running, stop it before starting the left timer
-        if (rightIntervalId.current) {
-            clearInterval(rightIntervalId.current);
-            setRightTimer(prev => prev);  // Keep the time as is
-            AsyncStorage.removeItem('rightStartTime');
-        }
-
+        stopTimers();
+        setType('breastfeeding')
         setActiveTimer('left');
         const startTime = Date.now();
         AsyncStorage.setItem('leftStartTime', startTime.toString());
@@ -54,13 +65,8 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const startRightTimer = () => {
-        // If left timer is running, stop it before starting the right timer
-        if (leftIntervalId.current) {
-            clearInterval(leftIntervalId.current);
-            setLeftTimer(prev => prev);  // Keep the time as is
-            AsyncStorage.removeItem('leftStartTime');
-        }
-
+        stopTimers();
+        setType('breastfeeding')
         setActiveTimer('right');
         const startTime = Date.now();
         AsyncStorage.setItem('rightStartTime', startTime.toString());
@@ -69,41 +75,55 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         }, 1000);
     };
 
+    const startSleepTimer = () => {
+        stopTimers();
+        setType('sleep')
+        setActiveTimer('sleep');
+        const startTime = Date.now();
+        AsyncStorage.setItem('sleepStartTime', startTime.toString());
+        sleepIntervalId.current = setInterval(() => {
+            setSleepTimer(prev => prev + 1);
+        }, 1000);
+    };
+
     const stopTimers = () => {
-        // Stop both timers
         if (leftIntervalId.current) clearInterval(leftIntervalId.current);
         if (rightIntervalId.current) clearInterval(rightIntervalId.current);
-        
-        // Retain the current time
+        if (sleepIntervalId.current) clearInterval(sleepIntervalId.current);
         setActiveTimer(null);
     };
 
     const resetTimers = () => {
-        // Reset both timers to 0
-        if (leftIntervalId.current) clearInterval(leftIntervalId.current);
-        if (rightIntervalId.current) clearInterval(rightIntervalId.current);
-    
-        // Reset both timer states to 0
+        stopTimers();
         setLeftTimer(0);
         setRightTimer(0);
-        setActiveTimer(null);
-    
-        // Clear AsyncStorage for both timers
+        setSleepTimer(0); // Reset sleep timer
         AsyncStorage.removeItem('leftStartTime');
         AsyncStorage.removeItem('rightStartTime');
-    
-        // Optional: Add a small delay before final state update to ensure everything is cleared
-        setTimeout(() => {
-            setLeftTimer(0);
-            setRightTimer(0);
-        }, 100);
+        AsyncStorage.removeItem('sleepStartTime'); // Clear sleep timer from storage
+    };
+
+    const updateType = (newType: 'breastfeeding' | 'sleep') => {
+        setType(newType);
+        AsyncStorage.setItem('type', newType);
     };
 
     return (
-        <TimerContext.Provider value={{
-            leftTimer, rightTimer, activeTimer, 
-            startLeftTimer, startRightTimer, stopTimers, resetTimers
-        }}>
+        <TimerContext.Provider
+            value={{
+                leftTimer,
+                rightTimer,
+                sleepTimer, 
+                activeTimer,
+                type,
+                startLeftTimer,
+                startRightTimer,
+                startSleepTimer, 
+                setType: updateType,
+                stopTimers,
+                resetTimers,
+            }}
+        >
             {children}
         </TimerContext.Provider>
     );
@@ -112,7 +132,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 export const useTimer = () => {
     const context = useContext(TimerContext);
     if (context === undefined) {
-        throw new Error("useTimer must be used within a TimerProvider");
+        throw new Error('useTimer must be used within a TimerProvider');
     }
     return context;
 };

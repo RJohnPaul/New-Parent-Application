@@ -5,40 +5,57 @@ import { Colors } from '../../constants/Colors';
 import { useTimer } from '@/constants/TimerContext'; // Assuming the timer context is already implemented
 import { useRouter } from 'expo-router';
 
-const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
+const images = {
+  breastfeeding: require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png'),
+  sleep: require('../../assets/images/sleep.png'),
+};
 
 const Tracking = () => {
-  const { leftTimer, rightTimer, activeTimer } = useTimer(); 
+  const { leftTimer, rightTimer, sleepTimer , activeTimer, type } = useTimer();
   const router = useRouter();
 
- 
-  const timer = activeTimer === 'left' ? leftTimer : activeTimer === 'right' ? rightTimer : 0;
-  const side = activeTimer === 'left' ? 'L' : activeTimer === 'right' ? 'R' : '';
-  const formattedTime = new Date(timer * 1000).toISOString().substr(14, 5); 
+  // Determine the timer and side based on the active tracking type
+  let timer = 0;
+  let side = '';
+  
+  // For breastfeeding and sleep, we need to handle their types correctly
+  if (activeTimer === 'left' || activeTimer === 'right') {
+    timer = activeTimer === 'left' ? leftTimer : rightTimer;
+    side = activeTimer === 'left' ? 'L' : 'R';
+  } else if (activeTimer === 'sleep') {
+    timer = sleepTimer;
+  }
 
+  const formattedTime = new Date(timer * 1000).toISOString().substr(14, 5);
 
-  if (!activeTimer) return null;
+  // Determine the route and title based on the tracking type
+  const route = type === 'breastfeeding' ? '/dialogs/feeding' : '/dialogs/sleeping';
+  const title = type === 'breastfeeding' ? 'Breastfeeding Tracker' : 'Sleep Tracker';
+  const image = images[type];
+
+  if (!activeTimer || !timer) return null;
 
   return (
-    <View style={styles.feedContainer}>
+    <View style={styles.container}>
       <View style={styles.trackingDetails}>
-        <Image source={feedingImage} style={styles.babyImage} />
+        <Image source={image} style={styles.babyImage} />
         <View style={styles.infoContainer}>
-          <Text style={styles.trackerTitle}>Breastfeeding Tracker</Text>
+          <Text style={styles.trackerTitle}>{title}</Text>
           <Text style={styles.trackerTime}>
-            {formattedTime} - {side}
+            {formattedTime} {type === 'breastfeeding' && side && `- ${side}`}
           </Text>
         </View>
-        <TouchableOpacity onPress={() => router.push('/dialogs/feeding' as any)}>
-          <MaterialIcons name={'chevron-right'} size={40} color={Colors.dark} />
+        <TouchableOpacity onPress={() => router.push(route)}>
+          <MaterialIcons name="chevron-right" size={40} color={Colors.dark} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
+
 const styles = StyleSheet.create({
-  feedContainer: {
+  container: {
     backgroundColor: '#2E98BF',
     padding: 10,
     borderRadius: 10,

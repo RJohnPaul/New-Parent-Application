@@ -16,7 +16,7 @@ const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-you
 
 export default function AddFeedScreen() {
     const [selectedOption, setSelectedOption] = useState('Breastfeeding');
-    const { leftTimer, rightTimer, activeTimer, startLeftTimer, startRightTimer, stopTimers, resetTimers } = useTimer(); // Use context values
+    const { leftTimer, rightTimer, activeTimer,type, setType, startLeftTimer, startRightTimer, stopTimers, resetTimers } = useTimer(); // Use context values
 
     const router = useRouter();
     const leftStartTime = useRef<Date | null>(null);
@@ -35,9 +35,11 @@ export default function AddFeedScreen() {
                 const savedRightTime = await AsyncStorage.getItem('rightStartTime');
 
                 if (savedLeftTime && !activeTimer) {
+                    setType('breastfeeding');
                     leftStartTime.current = new Date(parseInt(savedLeftTime));
                     startLeftTimer();
                 } else if (savedRightTime && !activeTimer) {
+                    setType('breastfeeding');
                     rightStartTime.current = new Date(parseInt(savedRightTime));
                     startRightTimer();
                 }
