@@ -13,7 +13,9 @@ import ScreenWrapper from '@/components/ScreenWrapper';
 import { supabase } from '../../supabase';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import { useUser } from '../UserContext'; // Import useUser
+import { useUser } from '../UserContext';
+import * as FileSystem from 'expo-file-system';
+import { Buffer } from 'buffer';
 
 const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-young-primary-school-teacher-at_32330362 (1).jpg');
 const feedingImage = require('../../assets/images/breastfeeding-illustration-mother-feeding-a-baby-with-breast-with-nature-and-leaves-background-concept-illustration-in-cartoon-style-vector.png');
@@ -21,32 +23,32 @@ const sleepImage = require('../../assets/images/sleep.png');
 const nappyImage = require('../../assets/images/nappy.png');
 const growthImage = require('../../assets/images/growth home.png');
 const healthImage = require('../../assets/images/health home.png');
-const babyImage = require('../../assets/images/babyImage.png'); // Add baby image
+const babyImage = require('../../assets/images/babyImage.png');
 
 const articles = [
   {
     id: 1,
     title: "Your baby's cues and signals",
     description: 'Babies communicate in many different ways. There are subtle signs you can look out for when he is tired...',
-    image: require('../../assets/images/art1.png'), 
+    image: require('../../assets/images/art1.png'),
     type: 'Blog'
   }
 ];
-const article1 = [ {
-    id: 2,
-    title: "How to stay relaxed when your baby won't eat",
-    description: 'We all know that in order for our babies to grow and thrive, they need to be taking in nutrients and gett...',
-    image: require('../../assets/images/art2.png'), 
-    type: 'Guide'
-  }
+const article1 = [{
+  id: 2,
+  title: "How to stay relaxed when your baby won't eat",
+  description: 'We all know that in order for our babies to grow and thrive, they need to be taking in nutrients and gett...',
+  image: require('../../assets/images/art2.png'),
+  type: 'Guide'
+}
 ];
-const article2 = [  {
-    id: 3,
-    title: "A letter to you, from your baby",
-    description: 'To you, the one who loves me unconditionally...',
-    image: require('../../assets/images/art3.png'), 
-    type: 'Blog'
-  }
+const article2 = [{
+  id: 3,
+  title: "A letter to you, from your baby",
+  description: 'To you, the one who loves me unconditionally...',
+  image: require('../../assets/images/art3.png'),
+  type: 'Blog'
+}
 ];
 
 type IconWithLabelProps = {
@@ -57,9 +59,10 @@ type IconWithLabelProps = {
 
 export default function HomePage() {
   const router = useRouter();
-  const { user } = useUser(); // Get the logged-in user
+  const { user } = useUser();
   const [userName, setUserName] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -74,6 +77,7 @@ export default function HomePage() {
           console.error('Error fetching user name:', error);
         } else {
           setUserName(data.name);
+          await fetchUserImage(data.name);
         }
       }
     };
@@ -81,16 +85,32 @@ export default function HomePage() {
     fetchUserName();
   }, [user]);
 
+  useEffect(() => {
+    if (userName) {
+      fetchUserImage(userName);
+    }
+  }, [userName, refresh]);
+
+  const fetchUserImage = async (name: string) => {
+    const { data } = supabase.storage
+      .from('images')
+      .getPublicUrl(`babypics/user_${name}.jpeg`);
+
+    if (data.publicUrl) {
+      setImageUri(data.publicUrl + '?' + new Date().getTime());
+    } else {
+      setImageUri(null);
+    }
+  };
+
   const pickAndUploadImage = async () => {
     try {
-      // Request permissions
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permissionResult.granted) {
         Alert.alert('Permission required', 'Please enable media permissions to upload an image.');
         return;
       }
 
-      // Pick an image
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -108,21 +128,23 @@ export default function HomePage() {
     }
   };
 
-  const uploadImage = async (uri: string) => {
+  const uploadImage = async (imageUri: string) => {
     try {
-      if (!user) {
-        Alert.alert('Error', 'User not authenticated.');
-        return;
-      }
+      const fileName = `user_${userName}.jpeg`;
+      const fileType = 'image/jpeg';
 
-      const response = await fetch(uri);
-      const blob = await response.blob();
-
-      const fileName = `baby-photo-${Date.now()}.jpg`;
-      const { data, error } = await supabase.storage.from('images').upload(fileName, blob, {
-        cacheControl: '3600',
-        upsert: false,
+      const fileContent = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
       });
+
+      const fileBuffer = Buffer.from(fileContent, 'base64');
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(`babypics/${fileName}`, fileBuffer, {
+          contentType: fileType,
+          upsert: true,
+        });
 
       if (error) {
         console.error('Supabase Upload Error:', error.message);
@@ -130,10 +152,12 @@ export default function HomePage() {
         return;
       }
 
-      const { data: publicUrlData } = supabase.storage.from('images').getPublicUrl(data.path);
-      const publicUrl = publicUrlData.publicUrl;
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(`babypics/${fileName}`);
 
-      setImageUri(publicUrl); // Display the uploaded image
+      setImageUri(publicUrl + '?' + new Date().getTime());
+      setRefresh(!refresh); // Trigger a re-render
       Alert.alert('Upload Successful', 'Your image has been uploaded successfully.');
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -152,37 +176,37 @@ export default function HomePage() {
         </View>
 
         <View style={styles.iconsRow}>
-          <IconWithLabel 
-            image={feedingImage} 
-            label="Feeding" 
-            onPress={() => router.push('/dialogs/feeding' as any)} 
+          <IconWithLabel
+            image={feedingImage}
+            label="Feeding"
+            onPress={() => router.push('/dialogs/feeding' as any)}
           />
-          <IconWithLabel 
-            image={sleepImage} 
-            label="Sleep" 
-            onPress={() => router.push('/dialogs/sleeping')} 
+          <IconWithLabel
+            image={sleepImage}
+            label="Sleep"
+            onPress={() => router.push('/dialogs/sleeping')}
           />
-          <IconWithLabel 
-            image={nappyImage} 
-            label="Nappy" 
-            onPress={() => router.push('/dialogs/nappy')} 
+          <IconWithLabel
+            image={nappyImage}
+            label="Nappy"
+            onPress={() => router.push('/dialogs/nappy')}
           />
-          <IconWithLabel 
-            image={growthImage} 
-            label="Growth" 
-            onPress={() => router.push('/dialogs/growth')} 
+          <IconWithLabel
+            image={growthImage}
+            label="Growth"
+            onPress={() => router.push('/dialogs/growth')}
           />
-          <IconWithLabel 
-            image={healthImage} 
-            label="Health" 
-            onPress={() => router.push('/dialogs/health')} 
+          <IconWithLabel
+            image={healthImage}
+            label="Health"
+            onPress={() => router.push('/dialogs/health')}
           />
         </View>
 
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={pickAndUploadImage}>
             {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.babyPhoto} />
+              <Image key={imageUri} source={{ uri: imageUri }} style={styles.babyPhoto} />
             ) : (
               <Image source={babyImage} style={styles.babyPhoto} />
             )}
@@ -201,7 +225,7 @@ export default function HomePage() {
               <Image source={article.image} style={styles.articleImage} />
               <Text style={styles.articleTitle}>{article.title}</Text>
               <Text style={styles.articleDescription}>{article.description}</Text>
-              <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article1' as any)}>
+              <TouchableOpacity style={styles.articleButton} onPress={() => router.push('/articles/article1' as any)}>
                 <Text style={styles.articleButtonText}>Read</Text>
                 <Text style={styles.articleType}>{article.type}</Text>
               </TouchableOpacity>
@@ -215,7 +239,7 @@ export default function HomePage() {
               <Image source={article.image} style={styles.articleImage} />
               <Text style={styles.articleTitle}>{article.title}</Text>
               <Text style={styles.articleDescription}>{article.description}</Text>
-              <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article2' as any)}>
+              <TouchableOpacity style={styles.articleButton} onPress={() => router.push('/articles/article2' as any)}>
                 <Text style={styles.articleButtonText}>Read</Text>
                 <Text style={styles.articleType}>{article.type}</Text>
               </TouchableOpacity>
@@ -229,7 +253,7 @@ export default function HomePage() {
               <Image source={article.image} style={styles.articleImage} />
               <Text style={styles.articleTitle}>{article.title}</Text>
               <Text style={styles.articleDescription}>{article.description}</Text>
-              <TouchableOpacity style={styles.articleButton}  onPress={() => router.push('/articles/article3' as any)}>
+              <TouchableOpacity style={styles.articleButton} onPress={() => router.push('/articles/article3' as any)}>
                 <Text style={styles.articleButtonText}>Read</Text>
                 <Text style={styles.articleType}>{article.type}</Text>
               </TouchableOpacity>
