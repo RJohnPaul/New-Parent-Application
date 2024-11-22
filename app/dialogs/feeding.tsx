@@ -15,6 +15,7 @@ const profile = require('../../assets/images/vecteezy_ai-generated-beautiful-you
 
 export default function AddFeedScreen() {
   const [selectedOption, setSelectedOption] = useState('Breastfeeding');
+  const [selectedMethod, setSelectedMethod] = useState('None');
   const { leftTimer, rightTimer, activeTimer,type, setType, startLeftTimer, startRightTimer, stopTimers, resetTimers } = useTimer(); // Use context values
   const router = useRouter();
   const { user } = useUser();
@@ -49,6 +50,9 @@ export default function AddFeedScreen() {
 
     resumeTimer();
   }, []);
+  const handleOptionSelect = (option: string) => {
+    setSelectedMethod(option);
+  };
 
   const saveFeedingEntry = async () => {
     if (!user) {
@@ -153,8 +157,11 @@ export default function AddFeedScreen() {
               <View style={styles.circleContainer}>
                 <View>
                   <TouchableOpacity
-                    style={styles.circle}
-                    onPress={startLeftTimer}
+                    style={[styles.circle, selectedMethod == "Left" && styles.selectedCircle]}
+                    onPress={() => {
+                        startLeftTimer();
+                        setSelectedMethod('Left');
+                      }}
                   >
                     <Text style={styles.circleText}>L</Text>
                   </TouchableOpacity>
@@ -163,8 +170,11 @@ export default function AddFeedScreen() {
 
                 <View>
                   <TouchableOpacity
-                    style={styles.circle}
-                    onPress={startRightTimer}
+                    style={[styles.circle, selectedMethod == "Right" && styles.selectedCircle]}
+                    onPress={() => {
+                        startRightTimer();
+                        setSelectedMethod('Right')
+                    }}
                   >
                     <Text style={styles.circleText}>R</Text>
                   </TouchableOpacity>
@@ -181,13 +191,19 @@ export default function AddFeedScreen() {
               <View style={styles.actionButtonContainer}>
                 <TouchableOpacity
                   style={styles.actionbutton}
-                  onPress={resetTimers}
+                  onPress={() => {
+                    resetTimers();
+                    setSelectedMethod('None')
+                  }}
                 >
                   <Text style={styles.actionbuttonText}>Reset</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.actionbutton}
-                  onPress={stopTimers}
+                  onPress={() => {
+                    stopTimers();
+                    setSelectedMethod('None')
+                  }}
                 >
                   <Text style={styles.actionbuttonText}>Stop</Text>
                 </TouchableOpacity>
@@ -197,10 +213,10 @@ export default function AddFeedScreen() {
         ) : (
           <View style={styles.timerContainer}>
             <View style={styles.circleContainer2}>
-              <TouchableOpacity style={styles.circle}>
+              <TouchableOpacity style={[styles.circle,selectedMethod == "BreastMilk" &&styles.selectedCircle]} onPress={() => setSelectedMethod('BreastMilk')}>
                 <Text style={styles.circleText2}>Breast{'\n'} milk</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.circle}>
+              <TouchableOpacity style={[styles.circle,selectedMethod == "Formula" && styles.selectedCircle]} onPress={() => setSelectedMethod('Formula')}>
                 <Text style={styles.circleText2}>Formula</Text>
               </TouchableOpacity>
             </View>
@@ -251,6 +267,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
    
+      },
+      selectedCircle: {
+        borderWidth: 3, 
+        backgroundColor: '#d3d3d3', 
       },
       toggleText: {
         color: Colors.primary,
