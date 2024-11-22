@@ -115,7 +115,7 @@ const AddGrowthDataScreen: React.FC = () => {
       <View style={styles.header}>
         <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
         <Text style={styles.headerText}>Add growth data</Text>
-        <Image source={profile} style={styles.avatar} />
+        
       </View>
 
       {/* Data Entry Fields */}
@@ -181,12 +181,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
+    right: 95,
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
+  
   dataContainer: {
     backgroundColor: '#CBE6F6',
     borderRadius: 8,
