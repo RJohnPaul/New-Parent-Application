@@ -16,11 +16,11 @@ const feedingHistory = (props: Props) => {
   const router = useRouter();
   const { user } = useUser();
   const [data, setData] = useState([
-    { date: 'Today', breastfeeding: '00:12:30', liquid: '0.00ml' },
-    { date: '12 May 24', breastfeeding: '00:00:00', liquid: '50.00ml' },
-    { date: '11 May 24', breastfeeding: '00:20:25', liquid: '0.00ml' },
-    { date: '10 May 24', breastfeeding: '00:00:00', liquid: '25.00ml' },
-    { date: '18 May 24', breastfeeding: '00:00:00', liquid: '25.00ml' },
+    { date: 'Today', breastfeeding: '00:12:30', liquid: null },
+    { date: '12 May 24', breastfeeding: '00:00:00', liquid: null },
+    { date: '11 May 24', breastfeeding: '00:20:25', liquid: null },
+    { date: '10 May 24', breastfeeding: '00:00:00', liquid: null },
+    { date: '18 May 24', breastfeeding: '00:00:00', liquid: null },
   ]);
 
   useEffect(() => {
@@ -44,11 +44,11 @@ const feedingHistory = (props: Props) => {
         }
 
         const fetchedData = [
-          { date: profileData.FEED_DATE_1, breastfeeding: profileData.FEED_TIME_1, liquid: '0.00ml' },
-          { date: profileData.FEED_DATE_2, breastfeeding: profileData.FEED_TIME_2, liquid: '50.00ml' },
-          { date: profileData.FEED_DATE_3, breastfeeding: profileData.FEED_TIME_3, liquid: '0.00ml' },
-          { date: profileData.FEED_DATE_4, breastfeeding: profileData.FEED_TIME_4, liquid: '25.00ml' },
-          { date: profileData.FEED_DATE_5, breastfeeding: profileData.FEED_TIME_5, liquid: '25.00ml' },
+          { date: profileData.FEED_DATE_1, breastfeeding: profileData.FEED_TIME_1, liquid: null },
+          { date: profileData.FEED_DATE_2, breastfeeding: profileData.FEED_TIME_2, liquid: null },
+          { date: profileData.FEED_DATE_3, breastfeeding: profileData.FEED_TIME_3, liquid: null },
+          { date: profileData.FEED_DATE_4, breastfeeding: profileData.FEED_TIME_4, liquid: null },
+          { date: profileData.FEED_DATE_5, breastfeeding: profileData.FEED_TIME_5, liquid: null },
         ];
 
         setData(fetchedData);
@@ -75,7 +75,7 @@ const feedingHistory = (props: Props) => {
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
           <Text style={styles.header}>Summary</Text>
-          <Image source={profile} style={styles.avatar} />
+          
         </View>
         <View style={styles.tableHeader}>
           <Text style={styles.headerText}>Date</Text>
@@ -105,6 +105,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
+    right: 130,
   },
   headerProfile: {
     flexDirection: 'row',

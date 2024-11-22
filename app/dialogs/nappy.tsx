@@ -147,9 +147,7 @@ export default function Nappy() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
+          
         </View>
 
         <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/nappyHistory' as any)}>

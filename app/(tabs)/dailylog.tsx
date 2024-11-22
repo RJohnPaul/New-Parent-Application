@@ -42,7 +42,7 @@ export default function Tab() {
     <ScreenWrapper bg='white'>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>Hi {userName}</Text>
+          <Text style={styles.greeting}>Daily Logs</Text>
           
         </View>
 

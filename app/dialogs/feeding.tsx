@@ -271,6 +271,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
+        alignItems: 'center',
+        right: 135,
     },
     headerProfile: {
         flexDirection: 'row',
