@@ -146,19 +146,24 @@ export default function Nappy() {
               <Text style={styles.singleCircle}>Solid</Text>
             </View>
           </View>
+<<<<<<< HEAD
 
           
+=======
+>>>>>>> 1c64660e7f6d30151bfe9f6f96afa8ad7be1bdc3
         </View>
 
-        <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/nappyHistory' as any)}>
-        <Text style={styles.summaryButtonText}>Summary</Text>
-      </TouchableOpacity>
+        
 
         <View>
           <Text style={styles.instext}>How to change diaper</Text>
+          <View style={styles.imageBox}>
           <Image source={diaper} style={styles.diaperImg}/>
+          </View>
         </View>
-
+        <TouchableOpacity style={styles.summaryButton} onPress={() => router.push('/dialogs/nappyHistory' as any)}>
+        <Text style={styles.summaryButtonText}>Summary</Text>
+      </TouchableOpacity>
 
       </ScrollView>
     </ScreenWrapper>
@@ -178,12 +183,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     right: 150,
   },
+  imageBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   diaperImg: {
-    resizeMode: 'cover',
-    width: '100%',
-    margin: -10
-
-
+    width: '100%',           // Make the image take up the full width of the container
+    aspectRatio: 1,          // Maintain the aspect ratio (adjust as needed)
+    resizeMode: 'contain',  
   },
   headerProfile: {
     flexDirection: 'row',
@@ -192,11 +200,7 @@ const styles = StyleSheet.create({
     
    
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
+
   timerContainer: {
     justifyContent: 'space-between',
     height: hp(65),
@@ -237,26 +241,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  button: {
-    backgroundColor: 'white',
-    height: hp(4),
-    width: '70%',
-    borderRadius: 10,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: Colors.primary,
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
+
   secondRow: {
-    marginTop: hp(10),
+    marginTop: hp(8),
     justifyContent: 'center',
   },
 
@@ -275,9 +263,11 @@ const styles = StyleSheet.create({
   },
 
   instext: {
+    marginTop: 10,
     color: '#4F8DD1',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
+    marginBottom: 10,
   }
 
 });
