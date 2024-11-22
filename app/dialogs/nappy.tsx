@@ -146,6 +146,11 @@ export default function Nappy() {
               <Text style={styles.singleCircle}>Solid</Text>
             </View>
           </View>
+<<<<<<< HEAD
+
+          
+=======
+>>>>>>> 1c64660e7f6d30151bfe9f6f96afa8ad7be1bdc3
         </View>
 
         

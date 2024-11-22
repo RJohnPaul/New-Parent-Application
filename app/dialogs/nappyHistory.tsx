@@ -72,7 +72,7 @@ const NappyHistory = (props: Props) => {
         <View style={styles.headerProfile}>
           <MaterialIcons name="cancel" size={30} color="#000" onPress={() => router.back()} />
           <Text style={styles.header}>Summary</Text>
-          <Image source={profile} style={styles.avatar} />
+          
         </View>
         <View style={styles.tableHeader}>
           <Text style={styles.headerText}>Date</Text>
@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
+    right: 130,
   },
   headerProfile: {
     flexDirection: 'row',
