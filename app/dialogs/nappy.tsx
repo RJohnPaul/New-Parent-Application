@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   diaperImg: {
     width: '100%',           // Make the image take up the full width of the container
-    aspectRatio: 1,          // Maintain the aspect ratio (adjust as needed)
+    aspectRatio: 3,          // Maintain the aspect ratio (adjust as needed)
     resizeMode: 'contain',  
   },
   headerProfile: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
 
   timerContainer: {
     justifyContent: 'space-between',
-    height: hp(65),
+    height: hp(55),
     backgroundColor: Colors.secondary,
     padding: 20,
     borderRadius: 10,
@@ -226,11 +226,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: '#4F8DD1',
     backgroundColor: '#FFFFFF66',
-    borderWidth: 1, // Default border width for unselected circles
+    borderWidth: 1, 
   },
   selectedCircle: {
-    borderWidth: 3, // Thicker border for selected circle
-    backgroundColor: '#d3d3d3', // Gray background shade for selected circle
+    borderWidth: 3, 
+    backgroundColor: '#d3d3d3', 
   },
   circleImage: {
     width: '100%',
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     paddingVertical: 12,
     alignItems: 'center',
-    marginTop: 10,
+    marginBottom: 30,
     
   },
   summaryButtonText: {
